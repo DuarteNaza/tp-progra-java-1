@@ -2,16 +2,17 @@ package juego;
 
 
 import java.awt.Color;
-
+import java.awt.Image;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
 
 public class Juego extends InterfaceJuego
 {
 	// El objeto Entorno que controla el tiempo y otros
-	private Entorno entorno;
 	
 	// Variables y métodos propios de cada grupo
+	
+	
 	// ...
 	
 	Juego()
@@ -19,8 +20,12 @@ public class Juego extends InterfaceJuego
 		// Inicializa el objeto entorno
 		this.entorno = new Entorno(this, "Proyecto para TP", 800, 600);
 		
+		
+		
 		// Inicializar lo que haga falta para el juego
 		// ...
+		
+		
 
 		// Inicia el juego!
 		this.entorno.iniciar();
@@ -35,9 +40,18 @@ public class Juego extends InterfaceJuego
 	public void tick()
 	{
 		// Procesamiento de un instante de tiempo
+		
+		
 		// ...
 		
-	}
+		
+		// si el usuario hace click izquierdo del mouse sobre un boton del menu, seleccionarlo
+		
+		
+			
+		}
+		
+	
 	
 
 	@SuppressWarnings("unused")
