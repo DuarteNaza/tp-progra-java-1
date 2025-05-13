@@ -1,4 +1,6 @@
 package juego;
+import java.awt.Color;
+import entorno.Entorno;
 
 public class Menu{
 	private int x;
@@ -31,4 +33,26 @@ public class Menu{
 		this.enemigosEliminados = kills;
 		
 	}
-}
+	  public void dibujar(Entorno entorno) {
+	        //  Fondo del menu
+		  entorno.dibujarRectangulo(x, 0, ancho, alto, 0, new Color(50, 50, 50));
+	        
+	        //  Título
+	        entorno.cambiarFont("Arial", 20, Color.WHITE);
+	        entorno.escribirTexto("HECHIZOS", x + 50, 40);
+	        
+	        //  Botones
+	        for (int i = 0; i < botones.length; i++) {
+	            botones[i].dibujar(entorno, x, i == hechizoSeleccionado);
+	        }
+	        
+	        //  Estadísticas
+	        entorno.cambiarFont("Arial", 16, Color.WHITE);
+	        entorno.escribirTexto("VIDA: " + vidaJugador, x + 20, 200);
+	        entorno.escribirTexto("MAGIA: " + energiaMagica, x + 20, 230);
+	        entorno.escribirTexto("ENEMIGOS: " + enemigosEliminados, x + 20, 260);
+	        
+	       
+	    }
+	  }
+

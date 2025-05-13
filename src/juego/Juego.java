@@ -12,14 +12,12 @@ import java.util.Random;
 public class Juego extends InterfaceJuego
 {
 	// El objeto Entorno que controla el tiempo y otros
-<<<<<<< HEAD
+
 	private Entorno entorno;
 	private Gondolf gondolf;
 	private ArrayList<Roca> rocas;
 	private Random random;
-=======
-	
->>>>>>> 080cdca80da84e486171b7acf0b67996e125811f
+	private Menu menu;
 	// Variables y métodos propios de cada grupo
 	
 	
@@ -28,12 +26,12 @@ public class Juego extends InterfaceJuego
 	Juego()
 	{
 		// Inicializa el objeto entorno
-<<<<<<< HEAD
-		this.entorno = new Entorno(this, "Proyecto para TP", 1200, 900);
-		this.gondolf = new Gondolf(500, 300);
+
+		this.entorno = new Entorno(this, "Juego Gondolf", 1200, 900);
+		this.gondolf = new Gondolf(600, 450);//centrado
 		this.rocas = new ArrayList<>();
 		this.random = new Random();
-
+		this.menu = new Menu(1000, 200, 900); //200px de ancho
 		for (int i = 0; i < 5; i++) {
 			rocas.add(new Roca(
 					random.nextInt(900) + 50,
@@ -41,12 +39,12 @@ public class Juego extends InterfaceJuego
 					40,
 					40));
 		}
-=======
-		this.entorno = new Entorno(this, "Proyecto para TP", 800, 600);
+
+
 		
 		
 		
->>>>>>> 080cdca80da84e486171b7acf0b67996e125811f
+
 		// Inicializar lo que haga falta para el juego
 		// ...
 		
@@ -64,8 +62,9 @@ public class Juego extends InterfaceJuego
 	 */
 	public void tick()
 	{
-<<<<<<< HEAD
+
 		manejarEntrada();
+		 dibujarMundo();
 		
 	}
 	private void manejarEntrada() {
@@ -88,7 +87,25 @@ public class Juego extends InterfaceJuego
 			}
 		}
 	}
-=======
+	 private void dibujarMundo() {
+	        entorno.dibujarRectangulo(0, 0, 1000, 900, 0, Color.BLACK);
+	        
+	        entorno.dibujarCirculo(gondolf.getX(), gondolf.getY(), 30, Color.BLUE);
+	        
+	        for (Roca r : rocas) {
+	            entorno.dibujarRectangulo(r.getX(), r.getY(), r.getAncho(), r.getAlto(), 0, Color.GRAY);
+	        }
+	        
+	        menu.actualizar(gondolf.getVida(), gondolf.getMagia(), 0); // 0 enemigos por ahora
+	        menu.dibujar(entorno);
+	        
+	        entorno.cambiarFont("Arial", 12, Color.WHITE);
+	        entorno.escribirTexto(
+	            String.format("Pos: (%.0f, %.0f)", gondolf.getX(), gondolf.getY()), 
+	            10, 20
+	        );
+	    }
+
 		// Procesamiento de un instante de tiempo
 		
 		
@@ -99,11 +116,11 @@ public class Juego extends InterfaceJuego
 		
 		
 			
-		}
+		
 		
 	
 	
->>>>>>> 080cdca80da84e486171b7acf0b67996e125811f
+
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args)

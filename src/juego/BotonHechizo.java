@@ -23,3 +23,5 @@ public class BotonHechizo {
 
 	public boolean fueClickeado(int mouseX, int mouseY, int offsetX) {
 		return mouseX >= offsetX && mouseX <= offsetX + 200 && mouseY >= y - 20 && mouseY <= y + 20;
+	}
+}
