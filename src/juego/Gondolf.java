@@ -50,8 +50,10 @@ public class Gondolf {
     }
 
     public void dibujar() {
-        System.out.printf("Gondolf - Posición: (%.1f, %.1f), Vida: %d, Magia: %d%n",
-                x, y, vida, magia);
+    	 System.out.println(
+    		        "Gondolf - Posición: (" + x + ", " + y + "), " +
+    		        "Vida: " + vida + ", Magia: " + magia
+    		    );
     }
 
     public double getX() {

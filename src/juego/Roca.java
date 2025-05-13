@@ -17,8 +17,10 @@ public class Roca {
     }
 
     public void dibujar() {
-        System.out.printf("Roca - Posición: (%.1f, %.1f), Tamaño: %.1fx%.1f%n",
-                x, y, ancho, alto);
+    	 System.out.println(
+    		        "Roca - Posición: (" + x + ", " + y + "), " +
+    		        "Tamaño: " + ancho + "x" + alto
+    		    );
     }
 
     public double getX() {
