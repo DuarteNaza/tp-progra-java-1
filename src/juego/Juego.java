@@ -2,7 +2,7 @@ package juego;
 
 
 import java.awt.Color;
-
+import java.awt.Image;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
 import java.util.ArrayList;
@@ -12,16 +12,23 @@ import java.util.Random;
 public class Juego extends InterfaceJuego
 {
 	// El objeto Entorno que controla el tiempo y otros
+<<<<<<< HEAD
 	private Entorno entorno;
 	private Gondolf gondolf;
 	private ArrayList<Roca> rocas;
 	private Random random;
+=======
+	
+>>>>>>> 080cdca80da84e486171b7acf0b67996e125811f
 	// Variables y métodos propios de cada grupo
+	
+	
 	// ...
 	
 	Juego()
 	{
 		// Inicializa el objeto entorno
+<<<<<<< HEAD
 		this.entorno = new Entorno(this, "Proyecto para TP", 1200, 900);
 		this.gondolf = new Gondolf(500, 300);
 		this.rocas = new ArrayList<>();
@@ -34,8 +41,16 @@ public class Juego extends InterfaceJuego
 					40,
 					40));
 		}
+=======
+		this.entorno = new Entorno(this, "Proyecto para TP", 800, 600);
+		
+		
+		
+>>>>>>> 080cdca80da84e486171b7acf0b67996e125811f
 		// Inicializar lo que haga falta para el juego
 		// ...
+		
+		
 
 		// Inicia el juego!
 		this.entorno.iniciar();
@@ -49,6 +64,7 @@ public class Juego extends InterfaceJuego
 	 */
 	public void tick()
 	{
+<<<<<<< HEAD
 		manejarEntrada();
 		
 	}
@@ -72,6 +88,22 @@ public class Juego extends InterfaceJuego
 			}
 		}
 	}
+=======
+		// Procesamiento de un instante de tiempo
+		
+		
+		// ...
+		
+		
+		// si el usuario hace click izquierdo del mouse sobre un boton del menu, seleccionarlo
+		
+		
+			
+		}
+		
+	
+	
+>>>>>>> 080cdca80da84e486171b7acf0b67996e125811f
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args)
