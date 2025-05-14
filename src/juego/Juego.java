@@ -18,6 +18,13 @@ public class Juego extends InterfaceJuego
 	private ArrayList<Roca> rocas;
 	private Random random;
 	private Menu menu;
+	private boolean juegoTerminado;
+	private int tiempoInicio;
+	private boolean juegoIniciado;
+	private int oleadaActual;
+	private Image fondo;
+	private ArrayList<Murcielago> murcielagos;
+
 	// Variables y métodos propios de cada grupo
 	
 	
