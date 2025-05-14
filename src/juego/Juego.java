@@ -80,20 +80,20 @@ public class Juego extends InterfaceJuego
 	    
 		if (entorno.estaPresionada(entorno.TECLA_ARRIBA)) {
 			
-			gondolf.mover("arriba");
+			gondolf.mover("arriba", entorno);
 		}
 		if (entorno.estaPresionada(entorno.TECLA_ABAJO)) { 
 			
-			gondolf.mover("abajo");
+			gondolf.mover("abajo", entorno);
 		}
 		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
 				 
-			gondolf.mover("izquierda");
+			gondolf.mover("izquierda", entorno);
 		}
 		if (entorno.estaPresionada(entorno.TECLA_DERECHA)) {
 				
 			
-			gondolf.mover("derecha");
+			gondolf.mover("derecha", entorno);
 		}
 		for (Roca r : rocas) {
 			if (r.colisionaCon(gondolf)) {

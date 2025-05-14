@@ -23,23 +23,24 @@ public class Gondolf {
         
     }
 
-    public void mover(String direccion,Entorno entorno) {
-    	double radio = this.ancho/2;
-        double limiteDerecho = 1000 - radio; 
+    public void mover(String direccion, Entorno entorno) {
+        double radio = this.ancho/2;
+        double limiteDerecho = 1000 - radio; // Ancho área de juego
+        
         switch (direccion.toLowerCase()) {
-        case "arriba":
-            setY(Math.max(radio, getY() - velocidad));
-            break;
-        case "abajo":
-            setY(Math.min(entorno.alto() - radio, getY() + velocidad));
-            break;
-        case "izquierda":
-            x = Math.max(radio, x - velocidad);
-            break;
-        case "derecha":
-            x = Math.min(limiteDerecho, x + velocidad);
-            break;
-    }
+            case "arriba":
+                setY(Math.max(radio, getY() - velocidad));
+                break;
+            case "abajo":
+                setY(Math.min(entorno.alto() - radio, getY() + velocidad));
+                break;
+            case "izquierda":
+                x = Math.max(radio, x - velocidad);
+                break;
+            case "derecha":
+                x = Math.min(limiteDerecho, x + velocidad);
+                break;
+        }
     }
 
     public void recibirDanio(int cantidad) {
