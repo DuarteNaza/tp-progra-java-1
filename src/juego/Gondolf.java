@@ -19,20 +19,19 @@ public class Gondolf {
 
     public void mover(String direccion) {
 
-        switch (direccion.toLowerCase()) {
-
-            case "arriba":
-                setY(getY() - velocidad);
-                break;
+        switch (direccion.toLowerCase() ) {
+            case "arriba" :
+            		setY(getY() - velocidad);
+            		break;	
             case "abajo":
-                setY(getY() + velocidad);
-                break;
+            		setY(getY() + velocidad);
+            		break;	
             case "izquierda":
-                x -= velocidad;
-                break;
+            		x -= velocidad;
+                	break;
             case "derecha":
-                x += velocidad;
-                break;
+            		x += velocidad;
+            		break;
         }
     }
 

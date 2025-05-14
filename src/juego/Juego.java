@@ -68,6 +68,8 @@ public class Juego extends InterfaceJuego
 		
 	}
 	private void manejarEntrada() {
+		double colisionX = gondolf.getX();
+	    double colisionY = gondolf.getY();
 		if (entorno.estaPresionada(entorno.TECLA_ARRIBA)) {
 			gondolf.mover("arriba");
 		}
@@ -77,13 +79,14 @@ public class Juego extends InterfaceJuego
 		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
 			gondolf.mover("izquierda");
 		}
-		if (entorno.estaPresionada(entorno.TECLA_DERECHA)) {
+		if (entorno.estaPresionada(entorno.TECLA_DERECHA)){
 			gondolf.mover("derecha");
 		}
-
 		for (Roca r : rocas) {
 			if (r.colisionaCon(gondolf)) {
-				gondolf.mover("arriba");
+				gondolf.setX(colisionX);
+            	gondolf.setY(colisionY);
+            	break;
 			}
 		}
 	}
