@@ -41,12 +41,12 @@ public class Menu{
 		
 	}
 	public void dibujar(Entorno entorno) {
-		entorno.dibujarRectangulo(x + ancho / 2, alto / 2, ancho, alto, 0, Color.LIGHT_GRAY);
+		entorno.dibujarRectangulo(x + ancho / 2, alto / 2, ancho, alto, 0, new Color(80,80,80));
 
-		entorno.cambiarFont("Arial", 16, Color.BLACK);
-		entorno.escribirTexto("VIDA: " + vidaJugador, x + 20, 30);
-		entorno.escribirTexto("MAGIA: " + energiaMagica, x + 20, 50);
-		entorno.escribirTexto("ELIMINADOS: " + enemigosEliminados, x + 20, 70);
+		entorno.cambiarFont("Arial", 18, Color.BLACK);
+		entorno.escribirTexto("VIDA: " + vidaJugador, x + 20, 26);
+		entorno.escribirTexto("MAGIA: " + energiaMagica, x + 20, 55);
+		entorno.escribirTexto("ELIMINADOS: " + enemigosEliminados, x + 20, 180);
 
 		for (int i = 0; i < botones.length; i++) {
 			boolean seleccionado = (i == hechizoSeleccionado);
