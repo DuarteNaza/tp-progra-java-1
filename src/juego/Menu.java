@@ -33,26 +33,38 @@ public class Menu{
 		this.enemigosEliminados = kills;
 		
 	}
-	  public void dibujar(Entorno entorno) {
-	        //  Fondo del menu
-		  entorno.dibujarRectangulo(x, 0, ancho, alto, 0, new Color(50, 50, 50));
-	        
-	        //  Título
-	        entorno.cambiarFont("Arial", 20, Color.WHITE);
-	        entorno.escribirTexto("HECHIZOS", x + 50, 40);
-	        
-	        //  Botones
-	        for (int i = 0; i < botones.length; i++) {
-	            botones[i].dibujar(entorno, x, i == hechizoSeleccionado);
-	        }
-	        
-	        //  Estadísticas
-	        entorno.cambiarFont("Arial", 16, Color.WHITE);
-	        entorno.escribirTexto("VIDA: " + vidaJugador, x + 20, 200);
-	        entorno.escribirTexto("MAGIA: " + energiaMagica, x + 20, 230);
-	        entorno.escribirTexto("ENEMIGOS: " + enemigosEliminados, x + 20, 260);
-	        
-	       
-	    }
-	  }
+	public void dibujar(Entorno entorno) {
+		entorno.dibujarRectangulo(x + ancho / 2, alto / 2, ancho, alto, 0, Color.LIGHT_GRAY);
+
+		entorno.cambiarFont("Arial", 16, Color.BLACK);
+		entorno.escribirTexto("VIDA: " + vidaJugador, x + 20, 30);
+		entorno.escribirTexto("MAGIA: " + energiaMagica, x + 20, 50);
+		entorno.escribirTexto("ELIMINADOS: " + enemigosEliminados, x + 20, 70);
+
+		for (int i = 0; i < botones.length; i++) {
+			boolean seleccionado = (i == hechizoSeleccionado);
+			botones[i].dibujar(entorno, x, seleccionado);
+		}
+	}
+
+	public void manejarClick(int mouseX, int mouseY) {
+		for (int i = 0; i < botones.length; i++) {
+			if (botones[i].fueClickeado(mouseX, mouseY, x)) {
+				hechizoSeleccionado = i;
+				return;
+			}
+		}
+	}
+
+	public void resetSeleccion() {
+		hechizoSeleccionado = -1;
+	}
+
+	public BotonHechizo getHechizoSeleccionado() {
+		if (hechizoSeleccionado >= 0 && hechizoSeleccionado < botones.length) {
+			return botones[hechizoSeleccionado];
+		}
+		return null;
+	}
+}
 
