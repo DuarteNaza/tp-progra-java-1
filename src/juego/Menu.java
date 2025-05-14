@@ -4,7 +4,14 @@ import entorno.Entorno;
 
 public class Menu{
 	private int x;
-	private int ancho;
+	public int ancho;
+	public int getAncho() {
+		return ancho;
+	}
+	public void setAncho(int ancho) {
+		this.ancho = ancho;
+	}
+
 	private int alto;
 
 	private BotonHechizo[] botones;

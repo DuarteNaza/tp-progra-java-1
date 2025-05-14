@@ -28,7 +28,7 @@ public class Juego extends InterfaceJuego
 		// Inicializa el objeto entorno
 
 		this.entorno = new Entorno(this, "Juego Gondolf", 1200, 900);
-		this.gondolf = new Gondolf(600, 450);//centrado
+		this.gondolf = new Gondolf(600, 450,60);//centrado
 		this.rocas = new ArrayList<>();
 		this.random = new Random();
 		this.menu = new Menu(1000, 200, 900); //200px de ancho
@@ -70,16 +70,22 @@ public class Juego extends InterfaceJuego
 	private void manejarEntrada() {
 		double colisionX = gondolf.getX();
 	    double colisionY = gondolf.getY();
+	    
 		if (entorno.estaPresionada(entorno.TECLA_ARRIBA)) {
+			
 			gondolf.mover("arriba");
 		}
-		if (entorno.estaPresionada(entorno.TECLA_ABAJO)) {
+		if (entorno.estaPresionada(entorno.TECLA_ABAJO)) { 
+			
 			gondolf.mover("abajo");
 		}
 		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
+				 
 			gondolf.mover("izquierda");
 		}
-		if (entorno.estaPresionada(entorno.TECLA_DERECHA)){
+		if (entorno.estaPresionada(entorno.TECLA_DERECHA)) {
+				
+			
 			gondolf.mover("derecha");
 		}
 		for (Roca r : rocas) {

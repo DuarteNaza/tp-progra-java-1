@@ -1,5 +1,7 @@
 package juego;
 
+import entorno.Entorno;
+
 public class Gondolf {
 
     double x;
@@ -7,24 +9,28 @@ public class Gondolf {
     private int vida, magia;
     private double velocidad;
     boolean estaVivo;
-
-    public Gondolf(double x, double y) {
+    private double ancho;
+    private double alto;
+    
+    public Gondolf(double x, double y, double ancho) {
         this.x = x;
         this.setY(y);
         this.vida = 100;
         this.magia = 50;
-        this.velocidad = 2.0;
+        this.velocidad = 9.0;
         this.estaVivo = true;
+        this.ancho=ancho;
+        
     }
 
     public void mover(String direccion) {
-
         switch (direccion.toLowerCase() ) {
             case "arriba" :
             		setY(getY() - velocidad);
             		break;	
             case "abajo":
-            		setY(getY() + velocidad);
+            	setY(getY() + velocidad);
+            	
             		break;	
             case "izquierda":
             		x -= velocidad;
@@ -54,7 +60,7 @@ public class Gondolf {
     		        "Vida: " + vida + ", Magia: " + magia
     		    );
     }
-
+    
     public double getX() {
         return x;
     }
