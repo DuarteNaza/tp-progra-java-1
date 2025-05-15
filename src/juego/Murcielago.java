@@ -32,7 +32,7 @@ public class Murcielago {
     public void recibirDanio(int cantidad) {
         vida -= cantidad;
         if (vida <= 0) {
-            activo = false; // El murciélago muere y desaparece
+            activo = false; 
         }
     }
     public boolean estaActivo() {

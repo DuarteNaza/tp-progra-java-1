@@ -49,7 +49,6 @@ public class Gondolf {
             estaVivo = false;
         }
     }
-
     public void usarMagia(int cantidad) {
         if (magia >= cantidad) {
             magia -= cantidad;

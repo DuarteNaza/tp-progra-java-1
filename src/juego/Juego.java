@@ -26,9 +26,9 @@ public class Juego extends InterfaceJuego
 	private ArrayList<Murcielago> murcielagos;
 	private ArrayList<Hechizos> hechizosActivos;
 	private boolean juegoGanado;
-	// Variables y métodos propios de cada grupo
-	
-	
+	private int enemigosTotales = 50;
+	private int enemigosEliminados = 0;
+
 	// ...
 	
 	Juego()
@@ -68,26 +68,51 @@ public class Juego extends InterfaceJuego
 		this.entorno.iniciar();
 	}
 
+	
+	
 	/**
 	 * Durante el juego, el método tick() será ejecutado en cada instante y 
 	 * por lo tanto es el método más importante de esta clase. Aquí se debe 
 	 * actualizar el estado interno del juego para simular el paso del tiempo 
 	 * (ver el enunciado del TP para mayor detalle).
 	 */
+	
+	
+	
+	
+	
 	public void tick()
 	
 	{
-
+		 if (!juegoIniciado) {
+		        dibujarPantallaInicio();
+		        if (entorno.sePresiono(entorno.TECLA_ESPACIO)) {
+		            juegoIniciado = true;
+		        }
+		        return;
+		    }
 		manejarEntrada();
 		manejarHechizos();  // Usa este método en lugar del código con barra espaciadora
 		dibujarMundo();
 		verificarColisiones();
-		
+		spawnearMurcielagos();
+		murcielagos.removeIf(m -> !m.estaActivo());
+		menu.actualizar(gondolf.getVida(), gondolf.getMagia(), enemigosEliminados);
+		if (gondolf.getVida() <= 0) {
+		    juegoTerminado = true;
+		    juegoGanado = false;
+		} else if (enemigosEliminados >= enemigosTotales && murcielagos.isEmpty()) {
+		    juegoTerminado = true;
+		    juegoGanado = true;
+		}
 	}
+	
 	private void manejarEntrada() {
 		double colisionX = gondolf.getX();
 	    double colisionY = gondolf.getY();
-	    
+	    if (juegoTerminado) {
+	        return;
+	    }
 		if (entorno.estaPresionada(entorno.TECLA_ARRIBA)) {
 			
 			gondolf.mover("arriba", entorno);
@@ -114,7 +139,7 @@ public class Juego extends InterfaceJuego
 		}
 	}
 	
-	 private void dibujarMundo() {
+	private void dibujarMundo() {
 
 	        entorno.dibujarRectangulo(0, 0, 1000, 900, 0, Color.black);
 	        
@@ -146,6 +171,7 @@ public class Juego extends InterfaceJuego
 	        for (Murcielago m : murcielagos) {
 	            m.moverHacia(gondolf);
 	            m.dibujar(entorno);
+	            
 	        }
 
 	        // Dibujar hechizos activos y afectar murciélagos
@@ -164,7 +190,8 @@ public class Juego extends InterfaceJuego
 	        }
 
 	    }
-	 private void manejarHechizos() {
+	
+	private void manejarHechizos() {
 		 if (entorno.sePresiono(entorno.TECLA_SHIFT)) {
 			 	int mouseX = entorno.mouseX();  // Obtener posición X del mouse
 		        int mouseY = entorno.mouseY();  // Obtener posición Y del mouse
@@ -177,7 +204,7 @@ public class Juego extends InterfaceJuego
 		    }
 		}
 
-	 private void lanzarHechizo(int x, int y) {
+	private void lanzarHechizo(int x, int y) {
 		    BotonHechizo boton = menu.getHechizoSeleccionado();
 		    if (boton != null && gondolf.getMagia() >= boton.getCosto()) {
 		        int daño = boton.getNombre().equals("Explosion") ? 2 : 1;
@@ -187,14 +214,29 @@ public class Juego extends InterfaceJuego
 		    }
 		}
 		
-		private void dibujarPantallaInicio() {
-		    entorno.cambiarFont("Arial", 40, Color.YELLOW);
-		    entorno.escribirTexto("EL CAMINO DE GONDOLF", 300, 300);
-		    entorno.cambiarFont("Arial", 20, Color.WHITE);
-		    entorno.escribirTexto("Presiona ESPACIO para comenzar", 400, 400);
-		}
+	private void dibujarPantallaInicio() {
+	    entorno.dibujarRectangulo(
+	        600, 250,  
+	        550, 60,  
+	        0,         
+	        new Color(10, 30, 100, 220) 
+	    );
+	    entorno.cambiarFont("Arial", 40, Color.YELLOW);
+	    entorno.escribirTexto("EL CAMINO DE GONDOLF", 330, 260);
 
-		private void dibujarPantallaFin() {
+
+	    entorno.dibujarRectangulo(
+	        600, 350,
+	        450, 40, 
+	        0,
+	        new Color(100, 20, 20, 220) 
+	    );
+	    entorno.cambiarFont("Arial", 20, Color.WHITE);
+	    entorno.escribirTexto("Presiona ESPACIO para comenzar", 380, 360);
+	}
+
+
+	private void dibujarPantallaFin() {
 		    entorno.cambiarFont("Arial", 40, 
 		        juegoGanado ? Color.GREEN : Color.RED);
 		    entorno.escribirTexto(
@@ -202,10 +244,10 @@ public class Juego extends InterfaceJuego
 		        450, 300);
 		    // ... más detalles
 		}
-		private void verificarColisiones() {
+		
+	private void verificarColisiones() {
 		    for (Roca r : rocas) {
 		        if (r.colisionaCon(gondolf)) {
-		            // Alejar a Gondolf más de la roca
 		            double dx = gondolf.getX() - r.getX();
 		            double dy = gondolf.getY() - r.getY();
 		            double distancia = Math.sqrt(dx*dx + dy*dy);
@@ -219,8 +261,57 @@ public class Juego extends InterfaceJuego
 		            }
 		        }
 		    }
+		    for (Murcielago m : murcielagos) {
+		        if (m.estaActivo() && distancia(gondolf, m) < 30) { // Radio de colisión
+		            gondolf.recibirDanio(10); // Daño por contacto
+		            m.recibirDanio(100); // Elimina al murciélago
+		            enemigosEliminados++; // Actualizar contador
+		        }
+		    }
 		}
-		// Procesamiento de un instante de tiempo
+		
+	
+	private double distancia(Gondolf g, Murcielago m) {
+	    return Math.sqrt(Math.pow(g.getX() - m.getX(), 2) + Math.pow(g.getY() - m.getY(), 2));
+	}
+	
+
+	private void spawnearMurcielagos() {
+	    if (murcielagos.size() < 10 && enemigosEliminados < enemigosTotales) {
+	    	
+	        double x, y;
+	        int borde = random.nextInt(4); // 0: arriba, 1: derecha, 2: abajo, 3: izquierda
+	        
+	        switch (borde) {
+	            case 0: // Arriba
+	                x = random.nextInt(1000);
+	                y = 0;
+	                break;
+	            case 1: // Derecha
+	                x = 1000;
+	                y = random.nextInt(900);
+	                break;
+	            case 2: // Abajo
+	                x = random.nextInt(1000);
+	                y = 900;
+	                break;
+	            case 3: // Izquierda
+	                x = 0;
+	                y = random.nextInt(900);
+	                break;
+	            default:
+	                x = 0; y = 0;
+	        }
+	        
+	        murcielagos.add(new Murcielago(x, y, 2));
+	        }
+	    }
+	
+	
+
+	
+	
+	// Procesamiento de un instante de tiempo
 		
 		
 		// ...
