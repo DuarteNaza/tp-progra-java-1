@@ -96,6 +96,7 @@ public class Juego extends InterfaceJuego
 		dibujarMundo();
 		verificarColisiones();
 		spawnearMurcielagos();
+		moverMurcielagos();
 		murcielagos.removeIf(m -> !m.estaActivo());
 		menu.actualizar(gondolf.getVida(), gondolf.getMagia(), enemigosEliminados);
 		if (gondolf.getVida() <= 0) {
@@ -113,23 +114,23 @@ public class Juego extends InterfaceJuego
 	    if (juegoTerminado) {
 	        return;
 	    }
-		if (entorno.estaPresionada(entorno.TECLA_ARRIBA)) {
+		if (entorno.estaPresionada(entorno.TECLA_ARRIBA) || entorno.estaPresionada('w')) {
 			
 			gondolf.mover("arriba", entorno);
 		}
-		if (entorno.estaPresionada(entorno.TECLA_ABAJO)) { 
+		if (entorno.estaPresionada(entorno.TECLA_ABAJO) || entorno.estaPresionada('s')) { 
 			
 			gondolf.mover("abajo", entorno);
 		}
-		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
+		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) || entorno.estaPresionada('a')) {
 				 
 			gondolf.mover("izquierda", entorno);
 		}
-		if (entorno.estaPresionada(entorno.TECLA_DERECHA)) {
-				
+		if (entorno.estaPresionada(entorno.TECLA_DERECHA) || entorno.estaPresionada('d')) {	
 			
 			gondolf.mover("derecha", entorno);
 		}
+		
 		for (Roca r : rocas) {
 			if (r.colisionaCon(gondolf)) {
 				gondolf.setX(colisionX);
@@ -181,7 +182,7 @@ public class Juego extends InterfaceJuego
 	                // Afectar murciélagos dentro del área de efecto
 	                for (Murcielago m : murcielagos) {
 	                	if (m.estaActivo() && h.afectaA(m)) {
-
+	                		enemigosEliminados++;
 	                        m.recibirDanio(h.getDaño());
 	                    }
 	                }
@@ -307,6 +308,13 @@ public class Juego extends InterfaceJuego
 	        }
 	    }
 	
+	private void moverMurcielagos() {
+	    for (Murcielago murcielago : murcielagos) {
+	        double newX = murcielago.getX(); 
+	        double newY = murcielago.getY(); 
+	        murcielago.mover(newX, newY, murcielagos, 10); 
+	    }
+	}
 	
 
 	
