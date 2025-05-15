@@ -122,6 +122,32 @@ public class Juego extends InterfaceJuego
 	        );
 	    }
 
+	 private void manejarHechizos() {
+	     if (entorno.hayClick()) {
+	         int mouseX = entorno.mouseX();
+	         int mouseY = entorno.mouseY();
+	         
+	         if (mouseX > 1000) {
+	             menu.manejarClick(mouseX, mouseY);
+	         } else if (menu.getHechizoSeleccionado() != null) {
+	             lanzarHechizo(mouseX, mouseY);
+	         }
+	     }
+	 }
+
+	 private void lanzarHechizo(int x, int y) {
+	     BotonHechizo hechizo = menu.getHechizoSeleccionado();
+	     if (gondolf.getMagia() >= hechizo.getCosto()) {
+	         gondolf.usarMagia(hechizo.getCosto());
+	         
+	         if (hechizo.getNombre().equals("Explosion")) {
+	             // Lógica de explosión
+	         } else if (hechizo.getNombre().equals("Fuego")) {
+	             
+	         }
+	         menu.resetSeleccion();
+	     }
+	 }
 		// Procesamiento de un instante de tiempo
 		
 		
