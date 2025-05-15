@@ -24,7 +24,7 @@ public class Juego extends InterfaceJuego
 	private int oleadaActual;
 	private Image fondo;
 	private ArrayList<Murcielago> murcielagos;
-	private ArrayList<Hechizos> hechizosActivos;
+	private ArrayList<Hechizo> hechizosActivos;
 	private boolean juegoGanado;
 	private int enemigosTotales = 50;
 	private int enemigosEliminados = 0;
@@ -176,7 +176,7 @@ public class Juego extends InterfaceJuego
 	        }
 
 	        // Dibujar hechizos activos y afectar murciélagos
-	        for (Hechizos h : hechizosActivos) {
+	        for (Hechizo h : hechizosActivos) {
 	            if (h.estaActivo()) {
 	                h.dibujar(entorno);
 	                // Afectar murciélagos dentro del área de efecto
@@ -209,7 +209,7 @@ public class Juego extends InterfaceJuego
 		    BotonHechizo boton = menu.getHechizoSeleccionado();
 		    if (boton != null && gondolf.getMagia() >= boton.getCosto()) {
 		        int daño = boton.getNombre().equals("Explosion") ? 2 : 1;
-		        hechizosActivos.add(new Hechizos(x, y, 50, daño));
+		        hechizosActivos.add(new Hechizo(x, y, 50, daño, daño));
 		        gondolf.usarMagia(boton.getCosto());
 		        menu.resetSeleccion();
 		    }
