@@ -29,6 +29,17 @@ public class Murcielago {
             y += (dy/distancia) * velocidad;
         }
     }
+    public void recibirDanio(int cantidad) {
+        vida -= cantidad;
+        if (vida <= 0) {
+            activo = false; // El murciélago muere y desaparece
+        }
+    }
+    public boolean estaActivo() {
+        return this.activo;
+    }
+
+
 
     public void dibujar(Entorno entorno) {
         if (!activo) return;
@@ -36,4 +47,13 @@ public class Murcielago {
     }
 
     // ... getters y setters
+    public double getX() {
+        return this.x;
+    }
+
+    public double getY() {
+        return this.y;
+    }
+
+    
 }

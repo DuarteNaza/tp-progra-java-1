@@ -24,7 +24,7 @@ public class Juego extends InterfaceJuego
 	private int oleadaActual;
 	private Image fondo;
 	private ArrayList<Murcielago> murcielagos;
-
+	private ArrayList<Hechizo> hechizosActivos;
 	// Variables y métodos propios de cada grupo
 	
 	
@@ -39,6 +39,12 @@ public class Juego extends InterfaceJuego
 		this.rocas = new ArrayList<>();
 		this.random = new Random();
 		this.menu = new Menu(1000, 200, 900); //200px de ancho
+		this.hechizosActivos = new ArrayList<>();
+		this.murcielagos = new ArrayList<>();
+		
+		murcielagos.add(new Murcielago(100, 100, 2));
+		murcielagos.add(new Murcielago(200, 200, 2));
+
 		for (int i = 0; i < 5; i++) {
 			rocas.add(new Roca(
 					random.nextInt(900) + 50,
@@ -71,6 +77,28 @@ public class Juego extends InterfaceJuego
 	{
 
 		manejarEntrada();
+		// Lógica para lanzar hechizos con barra espaciadora
+	    if (entorno.sePresiono(' ')) {
+	        int mouseX = entorno.mouseX();
+	        int mouseY = entorno.mouseY();
+
+	        // Evitar lanzar hechizos sobre el menú (que empieza en x=1000)
+	        if (mouseX < 1000) {
+	            BotonHechizo boton = menu.getHechizoSeleccionado();
+	            if (boton != null) {
+	                int costo = boton.getCosto();
+	                if (gondolf.getMagia() >= costo) {
+	                    Hechizo h = new Hechizo(mouseX, mouseY, 50, 1, costo); // radio 50, daño 1
+	                    hechizosActivos.add(h);
+	                    gondolf.usarMagia(costo);
+	                    menu.resetSeleccion();
+	                    System.out.println("Hechizo lanzado en (" + mouseX + ", " + mouseY + ")");
+	                } else {
+	                    System.out.println("No hay suficiente magia");
+	                }
+	            }
+	        }
+	    }
 		 dibujarMundo();
 		
 	}
@@ -103,8 +131,9 @@ public class Juego extends InterfaceJuego
 			}
 		}
 	}
+	
 	 private void dibujarMundo() {
-	        entorno.dibujarRectangulo(0, 0, 1000, 900, 0, Color.BLACK);
+	        entorno.dibujarRectangulo(0, 0, 1000, 900, 0, Color.black);
 	        
 	        entorno.dibujarCirculo(gondolf.getX(), gondolf.getY(), 30, Color.BLUE);
 	        
@@ -120,34 +149,29 @@ public class Juego extends InterfaceJuego
 	            String.format("Pos: (%.0f, %.0f)", gondolf.getX(), gondolf.getY()), 
 	            10, 20
 	        );
+	     // Dibujar murciélagos y moverlos
+	        for (Murcielago m : murcielagos) {
+	            m.moverHacia(gondolf);
+	            m.dibujar(entorno);
+	        }
+
+	        // Dibujar hechizos activos y afectar murciélagos
+	        for (Hechizo h : hechizosActivos) {
+	            if (h.estaActivo()) {
+	                h.dibujar(entorno);
+	                // Afectar murciélagos dentro del área de efecto
+	                for (Murcielago m : murcielagos) {
+	                	if (m.estaActivo() && h.afectaA(m)) {
+
+	                        m.recibirDanio(h.getDaño());
+	                    }
+	                }
+	                h.desactivar(); // El hechizo dura solo un tick
+	            }
+	        }
+
 	    }
 
-	 private void manejarHechizos() {
-	     if (entorno.hayClick()) {
-	         int mouseX = entorno.mouseX();
-	         int mouseY = entorno.mouseY();
-	         
-	         if (mouseX > 1000) {
-	             menu.manejarClick(mouseX, mouseY);
-	         } else if (menu.getHechizoSeleccionado() != null) {
-	             lanzarHechizo(mouseX, mouseY);
-	         }
-	     }
-	 }
-
-	 private void lanzarHechizo(int x, int y) {
-	     BotonHechizo hechizo = menu.getHechizoSeleccionado();
-	     if (gondolf.getMagia() >= hechizo.getCosto()) {
-	         gondolf.usarMagia(hechizo.getCosto());
-	         
-	         if (hechizo.getNombre().equals("Explosion")) {
-	             // Lógica de explosión
-	         } else if (hechizo.getNombre().equals("Fuego")) {
-	             
-	         }
-	         menu.resetSeleccion();
-	     }
-	 }
 		// Procesamiento de un instante de tiempo
 		
 		
