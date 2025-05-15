@@ -22,6 +22,7 @@ public class Roca {
     		        "Tamaño: " + ancho + "x" + alto
     		    );
     }
+    
 
     public double getX() {
         return x;

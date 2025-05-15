@@ -24,7 +24,8 @@ public class Juego extends InterfaceJuego
 	private int oleadaActual;
 	private Image fondo;
 	private ArrayList<Murcielago> murcielagos;
-	private ArrayList<Hechizo> hechizosActivos;
+	private ArrayList<Hechizos> hechizosActivos;
+	private boolean juegoGanado;
 	// Variables y métodos propios de cada grupo
 	
 	
@@ -41,7 +42,7 @@ public class Juego extends InterfaceJuego
 		this.menu = new Menu(1000, 200, 900); //200px de ancho
 		this.hechizosActivos = new ArrayList<>();
 		this.murcielagos = new ArrayList<>();
-		
+		this.juegoGanado = false;
 		murcielagos.add(new Murcielago(100, 100, 2));
 		murcielagos.add(new Murcielago(200, 200, 2));
 
@@ -74,32 +75,13 @@ public class Juego extends InterfaceJuego
 	 * (ver el enunciado del TP para mayor detalle).
 	 */
 	public void tick()
+	
 	{
 
 		manejarEntrada();
-		// Lógica para lanzar hechizos con barra espaciadora
-	    if (entorno.sePresiono(' ')) {
-	        int mouseX = entorno.mouseX();
-	        int mouseY = entorno.mouseY();
-
-	        // Evitar lanzar hechizos sobre el menú (que empieza en x=1000)
-	        if (mouseX < 1000) {
-	            BotonHechizo boton = menu.getHechizoSeleccionado();
-	            if (boton != null) {
-	                int costo = boton.getCosto();
-	                if (gondolf.getMagia() >= costo) {
-	                    Hechizo h = new Hechizo(mouseX, mouseY, 50, 1, costo); // radio 50, daño 1
-	                    hechizosActivos.add(h);
-	                    gondolf.usarMagia(costo);
-	                    menu.resetSeleccion();
-	                    System.out.println("Hechizo lanzado en (" + mouseX + ", " + mouseY + ")");
-	                } else {
-	                    System.out.println("No hay suficiente magia");
-	                }
-	            }
-	        }
-	    }
-		 dibujarMundo();
+		manejarHechizos();  // Usa este método en lugar del código con barra espaciadora
+		dibujarMundo();
+		verificarColisiones();
 		
 	}
 	private void manejarEntrada() {
@@ -133,6 +115,7 @@ public class Juego extends InterfaceJuego
 	}
 	
 	 private void dibujarMundo() {
+
 	        entorno.dibujarRectangulo(0, 0, 1000, 900, 0, Color.black);
 	        
 	        entorno.dibujarCirculo(gondolf.getX(), gondolf.getY(), 30, Color.BLUE);
@@ -149,6 +132,16 @@ public class Juego extends InterfaceJuego
 	            String.format("Pos: (%.0f, %.0f)", gondolf.getX(), gondolf.getY()), 
 	            10, 20
 	        );
+	        
+	        if (!juegoIniciado) {
+	            dibujarPantallaInicio();
+	            return;
+	        }
+	        
+	        if (juegoTerminado) {
+	            dibujarPantallaFin();
+	            return;
+	        }
 	     // Dibujar murciélagos y moverlos
 	        for (Murcielago m : murcielagos) {
 	            m.moverHacia(gondolf);
@@ -156,7 +149,7 @@ public class Juego extends InterfaceJuego
 	        }
 
 	        // Dibujar hechizos activos y afectar murciélagos
-	        for (Hechizo h : hechizosActivos) {
+	        for (Hechizos h : hechizosActivos) {
 	            if (h.estaActivo()) {
 	                h.dibujar(entorno);
 	                // Afectar murciélagos dentro del área de efecto
@@ -171,7 +164,62 @@ public class Juego extends InterfaceJuego
 	        }
 
 	    }
+	 private void manejarHechizos() {
+		 if (entorno.sePresiono(entorno.TECLA_SHIFT)) {
+			 	int mouseX = entorno.mouseX();  // Obtener posición X del mouse
+		        int mouseY = entorno.mouseY();  // Obtener posición Y del mouse
+		        
+		        if (mouseX > 1000) {
+		            menu.manejarClick(mouseX, mouseY);
+		        } else if (menu.getHechizoSeleccionado() != null) {
+		            lanzarHechizo(mouseX, mouseY);
+		        }
+		    }
+		}
 
+	 private void lanzarHechizo(int x, int y) {
+		    BotonHechizo boton = menu.getHechizoSeleccionado();
+		    if (boton != null && gondolf.getMagia() >= boton.getCosto()) {
+		        int daño = boton.getNombre().equals("Explosion") ? 2 : 1;
+		        hechizosActivos.add(new Hechizos(x, y, 50, daño));
+		        gondolf.usarMagia(boton.getCosto());
+		        menu.resetSeleccion();
+		    }
+		}
+		
+		private void dibujarPantallaInicio() {
+		    entorno.cambiarFont("Arial", 40, Color.YELLOW);
+		    entorno.escribirTexto("EL CAMINO DE GONDOLF", 300, 300);
+		    entorno.cambiarFont("Arial", 20, Color.WHITE);
+		    entorno.escribirTexto("Presiona ESPACIO para comenzar", 400, 400);
+		}
+
+		private void dibujarPantallaFin() {
+		    entorno.cambiarFont("Arial", 40, 
+		        juegoGanado ? Color.GREEN : Color.RED);
+		    entorno.escribirTexto(
+		        juegoGanado ? "¡VICTORIA!" : "GAME OVER", 
+		        450, 300);
+		    // ... más detalles
+		}
+		private void verificarColisiones() {
+		    for (Roca r : rocas) {
+		        if (r.colisionaCon(gondolf)) {
+		            // Alejar a Gondolf más de la roca
+		            double dx = gondolf.getX() - r.getX();
+		            double dy = gondolf.getY() - r.getY();
+		            double distancia = Math.sqrt(dx*dx + dy*dy);
+		            double distanciaMinima = 35; // Mayor que antes
+		            
+		            if (distancia < distanciaMinima) {
+		                double ajusteX = dx/distancia * (distanciaMinima - distancia);
+		                double ajusteY = dy/distancia * (distanciaMinima - distancia);
+		                gondolf.setX(gondolf.getX() + ajusteX);
+		                gondolf.setY(gondolf.getY() + ajusteY);
+		            }
+		        }
+		    }
+		}
 		// Procesamiento de un instante de tiempo
 		
 		

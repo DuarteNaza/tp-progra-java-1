@@ -25,7 +25,7 @@ public class BotonHechizo {
 		return mouseX >= offsetX && mouseX <= offsetX + 200 && mouseY >= y - 20 && mouseY <= y + 20;
 	}
 
-	public Object getNombre() {
+	public String getNombre() {
 		return nombre;
 	}
 
