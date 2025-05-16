@@ -32,6 +32,11 @@ public class BotonHechizo {
 	public int getCosto() {
 		return costo;
 	}
+
+	public int getY() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 	
 }

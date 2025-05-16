@@ -18,9 +18,15 @@ public class Hechizos {
     }
 
     public void dibujar(Entorno entorno) {
-        if (activo) {
-            entorno.dibujarCirculo(x, y, radio * 2, new Color(255, 255, 0, 100));
-        }
+    	 if (activo) {
+    	        // Efecto de explosión
+    	        for (int i = 0; i < 3; i++) {
+    	            Color color = (i == 0) ? new Color(255, 255, 0, 150) : 
+    	                       (i == 1) ? new Color(255, 150, 0, 100) : 
+    	                       new Color(255, 0, 0, 50);
+    	            entorno.dibujarCirculo(x, y, radio * (i + 1), color);
+    	        }
+    	    }
     }
 
     public boolean afectaA(Murcielago m) {

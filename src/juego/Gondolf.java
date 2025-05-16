@@ -62,6 +62,13 @@ public class Gondolf {
     		    );
     }
     
+    public void recuperarVida(int cantidad) {
+        vida = Math.min(100, vida + cantidad); // Límite máximo de 100
+    }
+
+    public void recuperarMagia(int cantidad) {
+        magia = Math.min(50, magia + cantidad); // Límite máximo de 50
+    }
     public double getX() {
         return x;
     }

@@ -4,6 +4,15 @@ import entorno.Entorno;
 
 public class Menu{
 	private int x;
+	private int y;
+
+	public int getY() {
+		return y;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
+
 	public int ancho;
 
 	public int getAncho() {
@@ -14,14 +23,11 @@ public class Menu{
 	}
 
 	private int alto;
-
 	private BotonHechizo[] botones;
 	private int hechizoSeleccionado;
-	
 	private int enemigosEliminados;
 	private int vidaJugador;
 	private int energiaMagica;
-	
 	public Menu(int x, int ancho, int alto) {
 		this.x = x;
 		this.ancho = ancho;
@@ -57,11 +63,14 @@ public class Menu{
 
 	public void manejarClick(int mouseX, int mouseY) {
 		for (int i = 0; i < botones.length; i++) {
-			if (botones[i].fueClickeado(mouseX, mouseY, x)) {
-				hechizoSeleccionado = i;
-				return;
-			}
-		}
+			 if (mouseX >= x && 
+			            mouseX <= x + 180 && 
+			            mouseY >= botones[i].getY() - 20 && 
+			            mouseY <= botones[i].getY() + 20) {
+			            hechizoSeleccionado = i; // Seleccionar este hechizo
+			            return;
+			 }
+			 }
 	}
 
 	public void resetSeleccion() {
@@ -75,5 +84,6 @@ public class Menu{
 		return null;
 	}
 
+	
 }
 

@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-public class Juego extends InterfaceJuego
-{
-	// El objeto Entorno que controla el tiempo y otros
+public class Juego extends InterfaceJuego{
+
 
 	private Entorno entorno;
 	private Gondolf gondolf;
@@ -21,25 +20,25 @@ public class Juego extends InterfaceJuego
 	private boolean juegoTerminado;
 	private int tiempoInicio;
 	private boolean juegoIniciado;
-	private int oleadaActual;
 	private Image fondo;
 	private ArrayList<Murcielago> murcielagos;
 	private ArrayList<Hechizo> hechizosActivos;
 	private boolean juegoGanado;
 	private int enemigosTotales = 50;
 	private int enemigosEliminados = 0;
+	private int oleadaActual = 1;
+	private int enemigosPorOleada = 10;
+	private int enemigosBasePorOleada = 10;
+	private ArrayList<Pocion> pociones = new ArrayList<>();
+	private int framesOleada = 0; // Variable nueva en Juego.java
 
-	// ...
-	
-	Juego()
-	{
-		// Inicializa el objeto entorno
+	Juego(){
 
 		this.entorno = new Entorno(this, "Juego Gondolf", 1200, 900);
-		this.gondolf = new Gondolf(600, 450,60);//centrado
+		this.gondolf = new Gondolf(600, 450,60);
 		this.rocas = new ArrayList<>();
 		this.random = new Random();
-		this.menu = new Menu(1000, 200, 900); //200px de ancho
+		this.menu = new Menu(1000, 200, 900);
 		this.hechizosActivos = new ArrayList<>();
 		this.murcielagos = new ArrayList<>();
 		this.juegoGanado = false;
@@ -56,34 +55,15 @@ public class Juego extends InterfaceJuego
 
 
 		
-		
-		
 
-		// Inicializar lo que haga falta para el juego
-		// ...
-		
-		
-
-		// Inicia el juego!
 		this.entorno.iniciar();
 	}
 
+
 	
+
 	
-	/**
-	 * Durante el juego, el método tick() será ejecutado en cada instante y 
-	 * por lo tanto es el método más importante de esta clase. Aquí se debe 
-	 * actualizar el estado interno del juego para simular el paso del tiempo 
-	 * (ver el enunciado del TP para mayor detalle).
-	 */
-	
-	
-	
-	
-	
-	public void tick()
-	
-	{
+	public void tick(){
 		 if (!juegoIniciado) {
 		        dibujarPantallaInicio();
 		        if (entorno.sePresiono(entorno.TECLA_ESPACIO)) {
@@ -92,19 +72,26 @@ public class Juego extends InterfaceJuego
 		        return;
 		    }
 		manejarEntrada();
-		manejarHechizos();  // Usa este método en lugar del código con barra espaciadora
+		manejarHechizos();  
 		dibujarMundo();
 		verificarColisiones();
 		spawnearMurcielagos();
 		moverMurcielagos();
+		actualizarOleada();
 		murcielagos.removeIf(m -> !m.estaActivo());
 		menu.actualizar(gondolf.getVida(), gondolf.getMagia(), enemigosEliminados);
+		
 		if (gondolf.getVida() <= 0) {
 		    juegoTerminado = true;
 		    juegoGanado = false;
 		} else if (enemigosEliminados >= enemigosTotales && murcielagos.isEmpty()) {
 		    juegoTerminado = true;
 		    juegoGanado = true;
+		}
+		if (framesOleada > 0) {
+		    entorno.cambiarFont("Arial", 30, Color.ORANGE);
+		    entorno.escribirTexto("¡OLEADA " + oleadaActual + "!", 500, 300);
+		    framesOleada--;
 		}
 	}
 	
@@ -139,6 +126,8 @@ public class Juego extends InterfaceJuego
 			}
 		}
 	}
+
+	
 	
 	private void dibujarMundo() {
 
@@ -168,43 +157,48 @@ public class Juego extends InterfaceJuego
 	            dibujarPantallaFin();
 	            return;
 	        }
-	     // Dibujar murciélagos y moverlos
 	        for (Murcielago m : murcielagos) {
 	            m.moverHacia(gondolf);
 	            m.dibujar(entorno);
 	            
 	        }
 
-	        // Dibujar hechizos activos y afectar murciélagos
 	        for (Hechizo h : hechizosActivos) {
 	            if (h.estaActivo()) {
 	                h.dibujar(entorno);
-	                // Afectar murciélagos dentro del área de efecto
 	                for (Murcielago m : murcielagos) {
 	                	if (m.estaActivo() && h.afectaA(m)) {
 	                		enemigosEliminados++;
 	                        m.recibirDanio(h.getDaño());
 	                    }
 	                }
-	                h.desactivar(); // El hechizo dura solo un tick
+	                h.desactivar();
 	            }
+	        }
+	        for (Pocion p : pociones) {
+	            p.dibujar(entorno);
 	        }
 
 	    }
 	
+	
+	
 	private void manejarHechizos() {
-		 if (entorno.sePresiono(entorno.TECLA_SHIFT)) {
-			 	int mouseX = entorno.mouseX();  // Obtener posición X del mouse
-		        int mouseY = entorno.mouseY();  // Obtener posición Y del mouse
+		 if (entorno.sePresiono(entorno.TECLA_ALT)) {
+			 	int mouseX = entorno.mouseX();
+		        int mouseY = entorno.mouseY();
 		        
-		        if (mouseX > 1000) {
-		            menu.manejarClick(mouseX, mouseY);
-		        } else if (menu.getHechizoSeleccionado() != null) {
+		        if (mouseX > 1000) { 
+		            menu.manejarClick(mouseX, mouseY); 
+		        } 
+		        else if (menu.getHechizoSeleccionado() != null) {
 		            lanzarHechizo(mouseX, mouseY);
 		        }
 		    }
 		}
 
+	
+	
 	private void lanzarHechizo(int x, int y) {
 		    BotonHechizo boton = menu.getHechizoSeleccionado();
 		    if (boton != null && gondolf.getMagia() >= boton.getCosto()) {
@@ -215,6 +209,7 @@ public class Juego extends InterfaceJuego
 		    }
 		}
 		
+	
 	private void dibujarPantallaInicio() {
 	    entorno.dibujarRectangulo(
 	        600, 250,  
@@ -243,33 +238,33 @@ public class Juego extends InterfaceJuego
 		    entorno.escribirTexto(
 		        juegoGanado ? "¡VICTORIA!" : "GAME OVER", 
 		        450, 300);
-		    // ... más detalles
 		}
 		
+	
 	private void verificarColisiones() {
-		    for (Roca r : rocas) {
-		        if (r.colisionaCon(gondolf)) {
-		            double dx = gondolf.getX() - r.getX();
-		            double dy = gondolf.getY() - r.getY();
-		            double distancia = Math.sqrt(dx*dx + dy*dy);
-		            double distanciaMinima = 35; // Mayor que antes
-		            
-		            if (distancia < distanciaMinima) {
-		                double ajusteX = dx/distancia * (distanciaMinima - distancia);
-		                double ajusteY = dy/distancia * (distanciaMinima - distancia);
-		                gondolf.setX(gondolf.getX() + ajusteX);
-		                gondolf.setY(gondolf.getY() + ajusteY);
+		for (Pocion p : new ArrayList<>(pociones)) {
+		    if (p.colisionaCon(gondolf)) {
+		        if (p.getTipo() == 0) gondolf.recuperarVida(20);
+		        else gondolf.recuperarMagia(15);
+		        p.desactivar();
+		        pociones.remove(p);
+		    }
+		}
+		    for (Murcielago m : murcielagos) {
+		        if (m.estaActivo() && distancia(gondolf, m) < 30) { 
+		            gondolf.recibirDanio(10); 
+		            m.recibirDanio(100); 
+		            enemigosEliminados++;
+		        }
+		    }
+		    for (Murcielago murcielago : new ArrayList<>(murcielagos)) {
+		        if (!murcielago.estaActivo()) {
+		            if (Math.random() < 0.1) {
+		                pociones.add(new Pocion(murcielago.getX(), murcielago.getY()));
 		            }
 		        }
 		    }
-		    for (Murcielago m : murcielagos) {
-		        if (m.estaActivo() && distancia(gondolf, m) < 30) { // Radio de colisión
-		            gondolf.recibirDanio(10); // Daño por contacto
-		            m.recibirDanio(100); // Elimina al murciélago
-		            enemigosEliminados++; // Actualizar contador
-		        }
-		    }
-		}
+	}
 		
 	
 	private double distancia(Gondolf g, Murcielago m) {
@@ -277,6 +272,8 @@ public class Juego extends InterfaceJuego
 	}
 	
 
+	
+	
 	private void spawnearMurcielagos() {
 	    if (murcielagos.size() < 10 && enemigosEliminados < enemigosTotales) {
 	    	
@@ -308,6 +305,7 @@ public class Juego extends InterfaceJuego
 	        }
 	    }
 	
+	
 	private void moverMurcielagos() {
 	    for (Murcielago murcielago : murcielagos) {
 	        double newX = murcielago.getX(); 
@@ -318,20 +316,18 @@ public class Juego extends InterfaceJuego
 	
 
 	
-	
-	// Procesamiento de un instante de tiempo
-		
-		
-		// ...
-		
-		
-		// si el usuario hace click izquierdo del mouse sobre un boton del menu, seleccionarlo
-		
+	private void actualizarOleada() {
+	    if (enemigosEliminados >= oleadaActual * enemigosPorOleada) {
+	        oleadaActual++;
+	        enemigosPorOleada = enemigosBasePorOleada + (oleadaActual * 2);
+	        framesOleada = 60; 
+	    }
+	}
+
 		
 			
 		
 		
-	
 	
 
 
