@@ -17,7 +17,7 @@ public class Pocion {
     
     public void dibujar(Entorno entorno) {
         if (activa) {
-            Color color = (tipo == 0) ? new Color(255, 50, 50) : new Color(50, 50, 255);
+            Color color = (tipo == 1) ? new Color(255, 50, 50) : new Color(50, 50, 255);
             entorno.dibujarCirculo(x, y, 20, color);
         }
     }

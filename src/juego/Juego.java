@@ -29,6 +29,8 @@ public class Juego extends InterfaceJuego{
 	private int oleadaActual = 1;
 	private int enemigosPorOleada = 10;
 	private int enemigosBasePorOleada = 10;
+	private int enemigosTotalesInactivos = 0;
+	private int enemigosTotalesActivos = 2;
 	private ArrayList<Pocion> pociones = new ArrayList<>();
 	private int framesOleada = 0; // Variable nueva en Juego.java
 
@@ -169,6 +171,8 @@ public class Juego extends InterfaceJuego{
 	                for (Murcielago m : murcielagos) {
 	                	if (m.estaActivo() && h.afectaA(m)) {
 	                		enemigosEliminados++;
+	    		            enemigosTotalesInactivos++;
+	    		            enemigosTotalesActivos--;
 	                        m.recibirDanio(h.getDaño());
 	                    }
 	                }
@@ -184,7 +188,7 @@ public class Juego extends InterfaceJuego{
 	
 	
 	private void manejarHechizos() {
-		 if (entorno.sePresiono(entorno.TECLA_ALT)) {
+		 if (entorno.sePresiono(entorno.TECLA_SHIFT)) {
 			 	int mouseX = entorno.mouseX();
 		        int mouseY = entorno.mouseY();
 		        
@@ -207,7 +211,10 @@ public class Juego extends InterfaceJuego{
 		        gondolf.usarMagia(boton.getCosto());
 		        menu.resetSeleccion();
 		    }
-		}
+		    else {
+		    menu.resetSeleccion();
+		    }
+	}
 		
 	
 	private void dibujarPantallaInicio() {
@@ -244,7 +251,7 @@ public class Juego extends InterfaceJuego{
 	private void verificarColisiones() {
 		for (Pocion p : new ArrayList<>(pociones)) {
 		    if (p.colisionaCon(gondolf)) {
-		        if (p.getTipo() == 0) gondolf.recuperarVida(20);
+		        if (p.getTipo() == 1) gondolf.recuperarVida(20);
 		        else gondolf.recuperarMagia(15);
 		        p.desactivar();
 		        pociones.remove(p);
@@ -255,6 +262,8 @@ public class Juego extends InterfaceJuego{
 		            gondolf.recibirDanio(10); 
 		            m.recibirDanio(100); 
 		            enemigosEliminados++;
+		            enemigosTotalesInactivos++;
+		            enemigosTotalesActivos--;
 		        }
 		    }
 		    for (Murcielago murcielago : new ArrayList<>(murcielagos)) {
@@ -275,7 +284,7 @@ public class Juego extends InterfaceJuego{
 	
 	
 	private void spawnearMurcielagos() {
-	    if (murcielagos.size() < 10 && enemigosEliminados < enemigosTotales) {
+	    if (murcielagos.size() < 10 && (enemigosTotalesInactivos + enemigosTotalesActivos) < enemigosPorOleada && enemigosEliminados < enemigosTotales) {
 	    	
 	        double x, y;
 	        int borde = random.nextInt(4); // 0: arriba, 1: derecha, 2: abajo, 3: izquierda
@@ -300,7 +309,7 @@ public class Juego extends InterfaceJuego{
 	            default:
 	                x = 0; y = 0;
 	        }
-	        
+	        enemigosTotalesActivos++;
 	        murcielagos.add(new Murcielago(x, y, 2));
 	        }
 	    }
@@ -317,19 +326,14 @@ public class Juego extends InterfaceJuego{
 
 	
 	private void actualizarOleada() {
-	    if (enemigosEliminados >= oleadaActual * enemigosPorOleada) {
+	    if (enemigosTotalesInactivos >= enemigosPorOleada) {
 	        oleadaActual++;
 	        enemigosPorOleada = enemigosBasePorOleada + (oleadaActual * 2);
+	        enemigosTotalesActivos = 0;
+	        enemigosTotalesInactivos = 0;
 	        framesOleada = 60; 
 	    }
 	}
-
-		
-			
-		
-		
-	
-
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args)

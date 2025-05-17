@@ -35,6 +35,11 @@ public class BotonHechizo {
 
 	public int getY() {
 		// TODO Auto-generated method stub
+		return y;
+	}
+
+	public int getX() {
+		// TODO Auto-generated method stub
 		return 0;
 	}
 	
