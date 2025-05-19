@@ -29,6 +29,7 @@ public class Juego extends InterfaceJuego{
 	private int enemigosBasePorOleada = 10;
 	private int enemigosTotalesInactivos = 0;
 	private int enemigosTotalesActivos = 2;
+	private int enemigosEliminadosPorHechizos = 0;
 	private ArrayList<Pocion> pociones = new ArrayList<>();
 	private int framesOleada = 0; 
 	//private int frameReinicio=0;
@@ -79,7 +80,7 @@ public class Juego extends InterfaceJuego{
 		moverMurcielagos();
 		actualizarOleada();
 		murcielagos.removeIf(m -> !m.estaActivo());
-		menu.actualizar(gondolf.getVida(), gondolf.getMagia(), enemigosEliminados);
+		menu.actualizar(gondolf.getVida(), gondolf.getMagia(), enemigosEliminadosPorHechizos);
 		 entorno.cambiarFont("Arial", 30, Color.ORANGE);
 		if (gondolf.getVida() <= 0) {
 		    juegoTerminado = true;
@@ -139,7 +140,6 @@ public class Juego extends InterfaceJuego{
 	            entorno.dibujarRectangulo(r.getX(), r.getY(), r.getAncho(), r.getAlto(), 0, Color.GRAY);
 	        }
 	        
-	        menu.actualizar(gondolf.getVida(), gondolf.getMagia(), 0);
 	        menu.dibujar(entorno);
 	        
 	        entorno.cambiarFont("Arial", 12, Color.WHITE);
@@ -168,7 +168,7 @@ public class Juego extends InterfaceJuego{
 	                h.dibujar(entorno);
 	                for (Murcielago m : murcielagos) {
 	                	if (m.estaActivo() && h.afectaA(m)) {
-	                		enemigosEliminados++;
+	                		enemigosEliminadosPorHechizos++;
 	    		            enemigosTotalesInactivos++;
 	    		            enemigosTotalesActivos--;
 	                        m.recibirDanio(h.getDaño());
@@ -208,9 +208,15 @@ public class Juego extends InterfaceJuego{
 		        hechizosActivos.add(new Hechizo(x, y, 50, daño, daño));
 		        gondolf.usarMagia(boton.getCosto());
 		        menu.resetSeleccion();
-		    }
-		    else {
-		    menu.resetSeleccion();
+		        
+		        int enemigosAAgregar = 1; 
+		        for (int i = 0; i < enemigosAAgregar; i++) {
+		            if ((enemigosTotalesInactivos + enemigosTotalesActivos) < enemigosPorOleada) {
+		                spawnearMurcielagos();
+		            }
+		        }
+		    } else {
+		        menu.resetSeleccion();
 		    }
 	}
 		
@@ -259,7 +265,7 @@ public class Juego extends InterfaceJuego{
 		        if (m.estaActivo() && distancia(gondolf, m) < 30) { 
 		            gondolf.recibirDanio(10); 
 		            m.recibirDanio(100); 
-		            enemigosEliminados++;
+		            enemigosEliminadosPorHechizos++;
 		            enemigosTotalesInactivos++;
 		            enemigosTotalesActivos--;
 		        }

@@ -28,6 +28,7 @@ public class Menu{
 	private int enemigosEliminados;
 	private int vidaJugador;
 	private int energiaMagica;
+	
 	public Menu(int x, int ancho, int alto) {
 		this.x = x;
 		this.ancho = ancho;
@@ -53,8 +54,7 @@ public class Menu{
 	    entorno.cambiarFont("Arial", 18, Color.BLACK);
 	    entorno.escribirTexto("VIDA: " + vidaJugador, x + 20, 26);
 	    entorno.escribirTexto("MAGIA: " + energiaMagica, x + 20, 55);
-		  entorno.escribirTexto("¡enemigos " + enemigosEliminados + "!", x + 20, 300);
-	    
+	    entorno.escribirTexto("ENEMIGOS: " + enemigosEliminados, x + 20, 220);
 	    for (int i = 0; i < botones.length; i++) {
 	        boolean seleccionado = (i == hechizoSeleccionado);
 	        botones[i].dibujar(entorno, x, seleccionado);
