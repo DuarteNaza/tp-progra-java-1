@@ -10,11 +10,14 @@ public class Murcielago {
     private double velocidad;
     private boolean activo;
     private int vida;
+    private double velocidadBase;
+    private double velocidadActual;
 
-    public Murcielago(double x, double y, double velocidad) {
+    public Murcielago(double x, double y, double velocidadBase,int oleadaActual) {
         this.x = x;
         this.y = y;
-        this.velocidad = velocidad;
+        this.velocidadBase = velocidadBase;
+        this.velocidadActual = velocidadBase + (oleadaActual * 0.3);
         this.activo = true;
         this.vida = 1;
     }
@@ -27,16 +30,18 @@ public class Murcielago {
         double distancia = Math.sqrt(dx*dx + dy*dy);
         
         if (distancia > 0) {
-            x += (dx/distancia) * velocidad;
-            y += (dy/distancia) * velocidad;
+        	x += (dx / distancia) * velocidadActual;
+        	y += (dy / distancia) * velocidadActual;
         }
     }
-    public void recibirDanio(int cantidad) {
+    
+public void recibirDanio(int cantidad) {
         vida -= cantidad;
         if (vida <= 0) {
             activo = false; 
         }
     }
+    
     public boolean estaActivo() {
         return this.activo;
     }

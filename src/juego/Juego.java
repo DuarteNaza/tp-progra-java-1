@@ -43,8 +43,8 @@ public class Juego extends InterfaceJuego{
 		this.hechizosActivos = new ArrayList<>();
 		this.murcielagos = new ArrayList<>();
 		this.juegoGanado = false;
-		murcielagos.add(new Murcielago(100, 100, 2));
-		murcielagos.add(new Murcielago(200, 200, 2));
+		murcielagos.add(new Murcielago(100, 100, 2, oleadaActual));
+		murcielagos.add(new Murcielago(200, 200, 2, oleadaActual));
 
 		for (int i = 0; i < 5; i++) {
 			rocas.add(new Roca(
@@ -314,7 +314,7 @@ public class Juego extends InterfaceJuego{
 	                x = 0; y = 0;
 	        }
 	        enemigosTotalesActivos++;
-	        murcielagos.add(new Murcielago(x, y, 2));
+	        murcielagos.add(new Murcielago(x, y, 2.0, oleadaActual));
 	        }
 	    }
 	
