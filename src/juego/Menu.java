@@ -41,7 +41,7 @@ public class Menu{
 		};
 		
 	}
-	public void actualizar (int vida, int magia,int kills) {
+	public void actualizar (int vida, int magia, int kills) {
 		this.vidaJugador = vida;
 		this.energiaMagica = magia;
 		this.enemigosEliminados = kills;
@@ -53,7 +53,7 @@ public class Menu{
 	    entorno.cambiarFont("Arial", 18, Color.BLACK);
 	    entorno.escribirTexto("VIDA: " + vidaJugador, x + 20, 26);
 	    entorno.escribirTexto("MAGIA: " + energiaMagica, x + 20, 55);
-	    entorno.escribirTexto("ELIMINADOS: " + enemigosEliminados, x + 20, 180);
+		  entorno.escribirTexto("¡enemigos " + enemigosEliminados + "!", x + 20, 300);
 	    
 	    for (int i = 0; i < botones.length; i++) {
 	        boolean seleccionado = (i == hechizoSeleccionado);
@@ -67,7 +67,7 @@ public class Menu{
 			            mouseX <= x + 180 && 
 			            mouseY >= botones[i].getY() - 20 && 
 			            mouseY <= botones[i].getY() + 20) {
-			            hechizoSeleccionado = i; // Seleccionar este hechizo
+			            hechizoSeleccionado = i;
 			            return;
 			 }
 			 }

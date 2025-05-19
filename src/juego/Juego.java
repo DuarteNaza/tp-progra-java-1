@@ -18,9 +18,7 @@ public class Juego extends InterfaceJuego{
 	private Random random;
 	private Menu menu;
 	private boolean juegoTerminado;
-	private int tiempoInicio;
 	private boolean juegoIniciado;
-	private Image fondo;
 	private ArrayList<Murcielago> murcielagos;
 	private ArrayList<Hechizo> hechizosActivos;
 	private boolean juegoGanado;
@@ -32,8 +30,8 @@ public class Juego extends InterfaceJuego{
 	private int enemigosTotalesInactivos = 0;
 	private int enemigosTotalesActivos = 2;
 	private ArrayList<Pocion> pociones = new ArrayList<>();
-	private int framesOleada = 0; // Variable nueva en Juego.java
-
+	private int framesOleada = 0; 
+	//private int frameReinicio=0;
 	Juego(){
 
 		this.entorno = new Entorno(this, "Juego Gondolf", 1200, 900);
@@ -68,7 +66,7 @@ public class Juego extends InterfaceJuego{
 	public void tick(){
 		 if (!juegoIniciado) {
 		        dibujarPantallaInicio();
-		        if (entorno.sePresiono(entorno.TECLA_ESPACIO)) {
+		        if (entorno.sePresiono(entorno.TECLA_ENTER)) {
 		            juegoIniciado = true;
 		        }
 		        return;
@@ -82,7 +80,7 @@ public class Juego extends InterfaceJuego{
 		actualizarOleada();
 		murcielagos.removeIf(m -> !m.estaActivo());
 		menu.actualizar(gondolf.getVida(), gondolf.getMagia(), enemigosEliminados);
-		
+		 entorno.cambiarFont("Arial", 30, Color.ORANGE);
 		if (gondolf.getVida() <= 0) {
 		    juegoTerminado = true;
 		    juegoGanado = false;
@@ -141,7 +139,7 @@ public class Juego extends InterfaceJuego{
 	            entorno.dibujarRectangulo(r.getX(), r.getY(), r.getAncho(), r.getAlto(), 0, Color.GRAY);
 	        }
 	        
-	        menu.actualizar(gondolf.getVida(), gondolf.getMagia(), 0); // 0 enemigos por ahora
+	        menu.actualizar(gondolf.getVida(), gondolf.getMagia(), 0);
 	        menu.dibujar(entorno);
 	        
 	        entorno.cambiarFont("Arial", 12, Color.WHITE);
@@ -188,7 +186,7 @@ public class Juego extends InterfaceJuego{
 	
 	
 	private void manejarHechizos() {
-		 if (entorno.sePresiono(entorno.TECLA_SHIFT)) {
+		 if (entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)) {
 			 	int mouseX = entorno.mouseX();
 		        int mouseY = entorno.mouseY();
 		        
@@ -235,7 +233,7 @@ public class Juego extends InterfaceJuego{
 	        new Color(100, 20, 20, 220) 
 	    );
 	    entorno.cambiarFont("Arial", 20, Color.WHITE);
-	    entorno.escribirTexto("Presiona ESPACIO para comenzar", 380, 360);
+	    entorno.escribirTexto("Presiona ENTER para comenzar", 380, 360);
 	}
 
 
@@ -323,7 +321,9 @@ public class Juego extends InterfaceJuego{
 	    }
 	}
 	
-
+	private int cantEnemigos() {
+		return this.enemigosEliminados;
+	}
 	
 	private void actualizarOleada() {
 	    if (enemigosTotalesInactivos >= enemigosPorOleada) {
@@ -333,8 +333,26 @@ public class Juego extends InterfaceJuego{
 	        enemigosTotalesInactivos = 0;
 	        framesOleada = 60; 
 	    }
+	    /*if(oleadaActual>2) {
+	    	reiniciarJuego();
+	    }*/
 	}
+/*private void reiniciarJuego() {
+	oleadaActual=1;
+	enemigosEliminados = 0;
+	gondolf = new  Gondolf( 600, 450,60);
+	murcielagos.clear();
+	pociones.clear();
+	hechizosActivos.clear();
+    entorno.cambiarFont("Arial", 12, Color.WHITE);
+    if(frameReinicio>0) {
+    	entorno.escribirTexto("Reiniciando juego...",400,300);
+    	frameReinicio--;
 
+    }
+    
+    
+}*/
 	@SuppressWarnings("unused")
 	public static void main(String[] args)
 	{
