@@ -32,7 +32,7 @@ public class Juego extends InterfaceJuego{
 	private int enemigosEliminadosPorHechizos = 0;
 	private ArrayList<Pocion> pociones = new ArrayList<>();
 	private int framesOleada = 0; 
-	//private int frameReinicio=0;
+	private ArrayList<IndicadorDaño> indicadoresDaño = new ArrayList<>();
 	Juego(){
 
 		this.entorno = new Entorno(this, "Juego Gondolf", 1200, 900);
@@ -180,8 +180,15 @@ public class Juego extends InterfaceJuego{
 	        for (Pocion p : pociones) {
 	            p.dibujar(entorno);
 	        }
-
+	        for (IndicadorDaño ind : new ArrayList<>(indicadoresDaño)) {
+	            ind.dibujar(entorno);
+	            if (!ind.estaActivo()) {
+	                indicadoresDaño.remove(ind); 
+	            }
+	        }
 	    }
+
+	    
 	
 	
 	
@@ -253,33 +260,45 @@ public class Juego extends InterfaceJuego{
 		
 	
 	private void verificarColisiones() {
-		for (Pocion p : new ArrayList<>(pociones)) {
-		    if (p.colisionaCon(gondolf)) {
-		        if (p.getTipo() == 1) gondolf.recuperarVida(20);
-		        else gondolf.recuperarMagia(15);
-		        p.desactivar();
-		        pociones.remove(p);
-		    }
-		}
-		    for (Murcielago m : murcielagos) {
-		        if (m.estaActivo() && distancia(gondolf, m) < 30) { 
-		            gondolf.recibirDanio(10); 
-		            m.recibirDanio(100); 
-		            enemigosEliminadosPorHechizos++;
-		            enemigosTotalesInactivos++;
-		            enemigosTotalesActivos--;
-		        }
-		    }
-		    for (Murcielago murcielago : new ArrayList<>(murcielagos)) {
-		        if (!murcielago.estaActivo()) {
-		            if (Math.random() < 0.1) {
-		                pociones.add(new Pocion(murcielago.getX(), murcielago.getY()));
-		            }
-		        }
-		    }
-	}
-		
-	
+    // Pociones
+    for (Pocion p : new ArrayList<>(pociones)) {
+        if (p.colisionaCon(gondolf)) {
+            if (p.getTipo() == 1) {
+                gondolf.recuperarVida(20);
+                indicadoresDaño.add(new IndicadorDaño(gondolf.getX(), gondolf.getY(), 20, Color.GREEN)); // +20 vida (verde)
+            } else {
+                gondolf.recuperarMagia(15);
+                indicadoresDaño.add(new IndicadorDaño(gondolf.getX(), gondolf.getY(), 15, Color.BLUE)); // +15 magia (azul)
+            }
+            p.desactivar();
+            pociones.remove(p);
+        }
+    }
+
+    // Murciélagos (daño al jugador y a enemigos)
+    for (Murcielago m : murcielagos) {
+        if (m.estaActivo() && distancia(gondolf, m) < 30) {
+            // Daño al jugador
+            gondolf.recibirDanio(10);
+            indicadoresDaño.add(new IndicadorDaño(gondolf.getX(), gondolf.getY(), -10, Color.RED)); // -10 vida (rojo)
+            
+            // Daño al murciélago (muerte instantánea)
+            m.recibirDanio(100);
+            indicadoresDaño.add(new IndicadorDaño(m.getX(), m.getY(), -100, Color.ORANGE)); // -100 vida (naranja)
+            
+            enemigosEliminadosPorHechizos++;
+            enemigosTotalesInactivos++;
+            enemigosTotalesActivos--;
+        }
+    }
+
+    // Spawn de pociones al morir murciélagos
+    for (Murcielago murcielago : new ArrayList<>(murcielagos)) {
+        if (!murcielago.estaActivo() && Math.random() < 0.1) {
+            pociones.add(new Pocion(murcielago.getX(), murcielago.getY()));
+        }
+    }
+}
 	private double distancia(Gondolf g, Murcielago m) {
 	    return Math.sqrt(Math.pow(g.getX() - m.getX(), 2) + Math.pow(g.getY() - m.getY(), 2));
 	}
@@ -327,9 +346,7 @@ public class Juego extends InterfaceJuego{
 	    }
 	}
 	
-	private int cantEnemigos() {
-		return this.enemigosEliminados;
-	}
+
 	
 	private void actualizarOleada() {
 	    if (enemigosTotalesInactivos >= enemigosPorOleada) {
