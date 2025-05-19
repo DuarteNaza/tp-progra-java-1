@@ -12,15 +12,15 @@ public class IndicadorDaño {
     public IndicadorDaño(double x, double y, int valor, Color color) {
         this.x = x;
         this.y = y;
-        this.texto = (valor > 0) ? "-" + valor : "+" + Math.abs(valor); // Ej: "-10" o "+20"
-        this.framesRestantes = 60; // Dura 1 segundo (60 frames)
+        this.texto = (valor > 0) ? "-" + valor : "+" + Math.abs(valor); 
+        this.framesRestantes = 60; 
         this.color = color;
     }
 
     public void dibujar(Entorno entorno) {
         if (framesRestantes > 0) {
             entorno.cambiarFont("Arial", 20, color);
-            entorno.escribirTexto(texto, x, y - (framesRestantes / 2)); // Sube mientras desaparece
+            entorno.escribirTexto(texto, x, y - (framesRestantes / 2));
             framesRestantes--;
         }
     }

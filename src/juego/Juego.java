@@ -2,7 +2,6 @@ package juego;
 
 
 import java.awt.Color;
-import java.awt.Image;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
 import java.util.ArrayList;
@@ -33,8 +32,15 @@ public class Juego extends InterfaceJuego{
 	private ArrayList<Pocion> pociones = new ArrayList<>();
 	private int framesOleada = 0; 
 	private ArrayList<IndicadorDaño> indicadoresDaño = new ArrayList<>();
+	private long tiempoInicioTotal;  
+	private long tiempoInicioOleada;
+	private String tiempoTotalFormateado = "00:00";
+	private String tiempoOleadaFormateado = "00:00";
+	
+	
 	Juego(){
-
+		this.tiempoInicioTotal = System.currentTimeMillis();
+		this.tiempoInicioOleada = System.currentTimeMillis();
 		this.entorno = new Entorno(this, "Juego Gondolf", 1200, 900);
 		this.gondolf = new Gondolf(600, 450,60);
 		this.rocas = new ArrayList<>();
@@ -46,6 +52,7 @@ public class Juego extends InterfaceJuego{
 		murcielagos.add(new Murcielago(100, 100, 2, oleadaActual));
 		murcielagos.add(new Murcielago(200, 200, 2, oleadaActual));
 
+		
 		for (int i = 0; i < 5; i++) {
 			rocas.add(new Roca(
 					random.nextInt(900) + 50,
@@ -62,9 +69,25 @@ public class Juego extends InterfaceJuego{
 
 
 	
+    private void actualizarContadores() {
+        long tiempoTranscurridoTotal = System.currentTimeMillis() - tiempoInicioTotal;
+        tiempoTotalFormateado = milisegundosAMinutosSegundos(tiempoTranscurridoTotal);
+        
+        long tiempoTranscurridoOleada = System.currentTimeMillis() - tiempoInicioOleada;
+        tiempoOleadaFormateado = milisegundosAMinutosSegundos(tiempoTranscurridoOleada);
+    }
+
+    private String milisegundosAMinutosSegundos(long milisegundos) {
+        long segundos = milisegundos / 1000;
+        long minutos = segundos / 60;
+        segundos = segundos % 60;
+        return String.format("%02d:%02d", minutos, segundos);
+    }
 
 	
 	public void tick(){
+		
+		actualizarContadores();
 		 if (!juegoIniciado) {
 		        dibujarPantallaInicio();
 		        if (entorno.sePresiono(entorno.TECLA_ENTER)) {
@@ -79,6 +102,7 @@ public class Juego extends InterfaceJuego{
 		spawnearMurcielagos();
 		moverMurcielagos();
 		actualizarOleada();
+		
 		murcielagos.removeIf(m -> !m.estaActivo());
 		menu.actualizar(gondolf.getVida(), gondolf.getMagia(), enemigosEliminadosPorHechizos);
 		 entorno.cambiarFont("Arial", 30, Color.ORANGE);
@@ -140,7 +164,7 @@ public class Juego extends InterfaceJuego{
 	            entorno.dibujarRectangulo(r.getX(), r.getY(), r.getAncho(), r.getAlto(), 0, Color.GRAY);
 	        }
 	        
-	        menu.dibujar(entorno);
+	        menu.dibujar(entorno,tiempoTotalFormateado, tiempoOleadaFormateado);
 	        
 	        entorno.cambiarFont("Arial", 12, Color.WHITE);
 	        entorno.escribirTexto(
@@ -351,6 +375,7 @@ public class Juego extends InterfaceJuego{
 	private void actualizarOleada() {
 	    if (enemigosTotalesInactivos >= enemigosPorOleada) {
 	        oleadaActual++;
+	        tiempoInicioOleada = System.currentTimeMillis();
 	        enemigosPorOleada = enemigosBasePorOleada + (oleadaActual * 2);
 	        enemigosTotalesActivos = 0;
 	        enemigosTotalesInactivos = 0;
@@ -360,22 +385,7 @@ public class Juego extends InterfaceJuego{
 	    	reiniciarJuego();
 	    }*/
 	}
-/*private void reiniciarJuego() {
-	oleadaActual=1;
-	enemigosEliminados = 0;
-	gondolf = new  Gondolf( 600, 450,60);
-	murcielagos.clear();
-	pociones.clear();
-	hechizosActivos.clear();
-    entorno.cambiarFont("Arial", 12, Color.WHITE);
-    if(frameReinicio>0) {
-    	entorno.escribirTexto("Reiniciando juego...",400,300);
-    	frameReinicio--;
-
-    }
-    
-    
-}*/
+	
 	@SuppressWarnings("unused")
 	public static void main(String[] args)
 	{

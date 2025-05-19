@@ -18,6 +18,8 @@ public class Menu{
 	public int getAncho() {
 		return ancho;
 	}
+	
+
 	public void setAncho(int ancho) {
 		this.ancho = ancho;
 	}
@@ -42,19 +44,28 @@ public class Menu{
 		};
 		
 	}
+	
+
 	public void actualizar (int vida, int magia, int kills) {
 		this.vidaJugador = vida;
 		this.energiaMagica = magia;
 		this.enemigosEliminados = kills;
 		
 	}
-	public void dibujar(Entorno entorno) {
+	
+	
+	public void dibujar(Entorno entorno,String tiempoTotal, String tiempoOleada) {
 	    entorno.dibujarRectangulo(x + ancho / 2, alto / 2, ancho, alto, 0, new Color(80,80,80));
 
 	    entorno.cambiarFont("Arial", 18, Color.BLACK);
 	    entorno.escribirTexto("VIDA: " + vidaJugador, x + 20, 26);
 	    entorno.escribirTexto("MAGIA: " + energiaMagica, x + 20, 55);
 	    entorno.escribirTexto("ENEMIGOS: " + enemigosEliminados, x + 20, 220);
+	    entorno.cambiarFont("Arial", 18, Color.WHITE);
+        entorno.cambiarFont("Arial", 14, Color.WHITE);
+        entorno.escribirTexto("TIEMPO TOTAL: " + tiempoTotal, x + 20, 250); 
+        entorno.escribirTexto("TIEMPO OLEADA: " + tiempoOleada, x + 20, 280);
+        
 	    for (int i = 0; i < botones.length; i++) {
 	        boolean seleccionado = (i == hechizoSeleccionado);
 	        botones[i].dibujar(entorno, x, seleccionado);
