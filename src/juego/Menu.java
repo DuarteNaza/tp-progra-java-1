@@ -3,9 +3,15 @@ import java.awt.Color;
 import entorno.Entorno;
 
 public class Menu{
+	private BotonHechizo[] botones;
 	private int x;
 	private int y;
-
+	private int alto;
+	private int hechizoSeleccionado;
+	private int enemigosEliminados;
+	private int vidaJugador;
+	private int energiaMagica;
+	
 	public int getY() {
 		return y;
 	}
@@ -24,26 +30,17 @@ public class Menu{
 		this.ancho = ancho;
 	}
 
-	private int alto;
-	private BotonHechizo[] botones;
-	private int hechizoSeleccionado;
-	private int enemigosEliminados;
-	private int vidaJugador;
-	private int energiaMagica;
+
 	
-	public Menu(int x, int ancho, int alto) {
-		this.x = x;
-		this.ancho = ancho;
-		this.alto = alto;
-		this.hechizoSeleccionado =  -1;
-		
-		this.botones = new BotonHechizo[] {
-				new BotonHechizo("Explosion",100,0), 
-				new BotonHechizo("Fuego",160,30)
-				
-		};
-		
-	}
+	 public Menu(int x, int ancho, int alto) {
+	        this.botones = new BotonHechizo[] {
+	            new BotonHechizo("Explosion", 100, 0), 
+	            new BotonHechizo("Fuego", 160, 30),
+	        };
+	        this.x = x;
+	        this.ancho = ancho;
+	        this.alto = alto;
+	    }
 	
 
 	public void actualizar (int vida, int magia, int kills) {
