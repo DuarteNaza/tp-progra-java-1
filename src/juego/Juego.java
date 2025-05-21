@@ -87,37 +87,66 @@ public class Juego extends InterfaceJuego{
 	
 	public void tick(){
 		
-		actualizarContadores();
-		 if (!juegoIniciado) {
-		        dibujarPantallaInicio();
-		        if (entorno.sePresiono(entorno.TECLA_ENTER)) {
-		            juegoIniciado = true;
-		        }
+		 actualizarContadores();
+		    
+		    if (!juegoIniciado) {
+		        manejarPantallaInicio();
 		        return;
 		    }
-		manejarEntrada();
-		manejarHechizos();  
-		dibujarMundo();
-		verificarColisiones();
-		spawnearMurcielagos();
-		moverMurcielagos();
-		actualizarOleada();
-		
-		murcielagos.removeIf(m -> !m.estaActivo());
-		menu.actualizar(gondolf.getVida(), gondolf.getMagia(), enemigosEliminadosPorHechizos);
-		 entorno.cambiarFont("Arial", 30, Color.ORANGE);
-		if (gondolf.getVida() <= 0) {
-		    juegoTerminado = true;
-		    juegoGanado = false;
-		} else if (enemigosEliminados >= enemigosTotales && murcielagos.isEmpty()) {
-		    juegoTerminado = true;
-		    juegoGanado = true;
+		    
+		    if (juegoTerminado) {
+		        dibujarPantallaFin();
+		        return;
+		    }
+		    
+		    ejecutarLogicaDelJuego();
+		    actualizarEstadoDelJuego();
+		    dibujarElementos();
 		}
-		if (framesOleada > 0) {
-		    entorno.cambiarFont("Arial", 30, Color.ORANGE);
-		    entorno.escribirTexto("¡OLEADA " + oleadaActual + "!", 500, 300);
-		    framesOleada--;
-		}
+
+	private void manejarPantallaInicio() {
+	    dibujarPantallaInicio();
+	    if (entorno.sePresiono(entorno.TECLA_ENTER)) {
+	        juegoIniciado = true;
+	    }
+	}
+
+	private void ejecutarLogicaDelJuego() {
+	    manejarEntrada();
+	    manejarHechizos();
+	    verificarColisiones();
+	    spawnearMurcielagos();
+	    moverMurcielagos();
+	    actualizarOleada();
+	}
+
+	private void actualizarEstadoDelJuego() {
+	    murcielagos.removeIf(m -> !m.estaActivo());
+	    menu.actualizar(gondolf.getVida(), gondolf.getMagia(), enemigosEliminadosPorHechizos);
+	    verificarFinDelJuego();
+	    actualizarMensajeOleada();
+	}
+
+	private void verificarFinDelJuego() {
+	    if (gondolf.getVida() <= 0) {
+	        juegoTerminado = true;
+	        juegoGanado = false;
+	    } else if (enemigosEliminados >= enemigosTotales && murcielagos.isEmpty()) {
+	        juegoTerminado = true;
+	        juegoGanado = true;
+	    }
+	}
+
+	private void actualizarMensajeOleada() {
+	    if (framesOleada > 0) {
+	        entorno.cambiarFont("Arial", 30, Color.ORANGE);
+	        entorno.escribirTexto("¡OLEADA " + oleadaActual + "!", 500, 300);
+	        framesOleada--;
+	    }
+	}
+
+	private void dibujarElementos() {
+	    dibujarMundo();
 	}
 	
 	private void manejarEntrada() {
@@ -232,6 +261,7 @@ public class Juego extends InterfaceJuego{
 
 	
 	
+	
 	private void lanzarHechizo(int x, int y) {
 		    BotonHechizo boton = menu.getHechizoSeleccionado();
 		    if (boton != null && gondolf.getMagia() >= boton.getCosto()) {
@@ -284,7 +314,6 @@ public class Juego extends InterfaceJuego{
 		
 	
 	private void verificarColisiones() {
-    // Pociones
     for (Pocion p : new ArrayList<>(pociones)) {
         if (p.colisionaCon(gondolf)) {
             if (p.getTipo() == 1) {
@@ -323,6 +352,9 @@ public class Juego extends InterfaceJuego{
         }
     }
 }
+	
+	
+
 	private double distancia(Gondolf g, Murcielago m) {
 	    return Math.sqrt(Math.pow(g.getX() - m.getX(), 2) + Math.pow(g.getY() - m.getY(), 2));
 	}
@@ -381,9 +413,7 @@ public class Juego extends InterfaceJuego{
 	        enemigosTotalesInactivos = 0;
 	        framesOleada = 60; 
 	    }
-	    /*if(oleadaActual>2) {
-	    	reiniciarJuego();
-	    }*/
+	    
 	}
 	
 	@SuppressWarnings("unused")

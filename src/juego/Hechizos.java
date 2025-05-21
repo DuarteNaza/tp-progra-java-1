@@ -19,7 +19,6 @@ public class Hechizos {
 
     public void dibujar(Entorno entorno) {
     	 if (activo) {
-    	        // Efecto de explosión
     	        for (int i = 0; i < 3; i++) {
     	            Color color = (i == 0) ? new Color(255, 87, 51, 100) : 
     	                       (i == 1) ? new Color(255, 150, 0, 100) : 

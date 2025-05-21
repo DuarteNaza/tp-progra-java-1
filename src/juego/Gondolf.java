@@ -25,8 +25,8 @@ public class Gondolf {
 
     public void mover(String direccion, Entorno entorno) {
         double radio = this.ancho/2;
-        double limiteDerecho = 1000 - radio; // Ancho área de juego
-        double limiteInferior = 900 - radio; // Alto del área de juego
+        double limiteDerecho = 1000 - radio; 
+        double limiteInferior = 900 - radio; 
         switch (direccion.toLowerCase()) {
         case "arriba":
             setY(Math.max(radio, getY() - velocidad));
@@ -63,11 +63,11 @@ public class Gondolf {
     }
     
     public void recuperarVida(int cantidad) {
-        vida = Math.min(100, vida + cantidad); // Límite máximo de 100
+        vida = Math.min(100, vida + cantidad); 
     }
 
     public void recuperarMagia(int cantidad) {
-        magia = Math.min(50, magia + cantidad); // Límite máximo de 50
+        magia = Math.min(50, magia + cantidad);
     }
     public double getX() {
         return x;

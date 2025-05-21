@@ -69,7 +69,6 @@ public void recibirDanio(int cantidad) {
         this.y = newY;
     }
     
-    // ... getters y setters
     public double getX() {
         return this.x;
     }
