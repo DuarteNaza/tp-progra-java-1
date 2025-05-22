@@ -12,6 +12,7 @@ public class Murcielago {
     private int vida;
     private double velocidadBase;
     private double velocidadActual;
+    private int danio;
 
     public Murcielago(double x, double y, double velocidadBase,int oleadaActual) {
         this.x = x;
@@ -20,6 +21,7 @@ public class Murcielago {
         this.velocidadActual = velocidadBase + (oleadaActual * 0.3);
         this.activo = true;
         this.vida = 1;
+        this.danio = 10;
     }
 
     public void moverHacia(Gondolf gondolf) {
@@ -35,7 +37,7 @@ public class Murcielago {
         }
     }
     
-public void recibirDanio(int cantidad) {
+    public void recibirDanio(int cantidad) {
         vida -= cantidad;
         if (vida <= 0) {
             activo = false; 
@@ -69,7 +71,13 @@ public void recibirDanio(int cantidad) {
          this.x = newX;
          this.y = newY;
      }
+    public void aumentarDanio() {
+        this.danio += 5;
+    }
     
+    public int getDanio() {
+        return danio;
+    }
     
     public double getX() {
         return this.x;

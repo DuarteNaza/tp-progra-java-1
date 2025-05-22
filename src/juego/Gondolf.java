@@ -10,7 +10,7 @@ public class Gondolf {
     private double velocidad;
     boolean estaVivo;
     private double ancho;
-    private double alto;
+
     
     public Gondolf(double x, double y, double ancho) {
         this.x = x;
@@ -27,20 +27,23 @@ public class Gondolf {
         double radio = this.ancho/2;
         double limiteDerecho = 1000 - radio; 
         double limiteInferior = 900 - radio; 
+        double limiteSuperior = radio;
+        double limiteIzquierdo = radio;
+        
         switch (direccion.toLowerCase()) {
-        case "arriba":
-            setY(Math.max(radio, getY() - velocidad));
-            break;
-        case "abajo":
-            setY(Math.min(limiteInferior, getY() + velocidad));
-            break;
-        case "izquierda":
-            x = Math.max(radio, x - velocidad);
-            break;
-        case "derecha":
-            x = Math.min(limiteDerecho, x + velocidad);
-            break;
-    }
+            case "arriba":
+                setY(Math.max(limiteSuperior, getY() - velocidad));
+                break;
+            case "abajo":
+                setY(Math.min(limiteInferior, getY() + velocidad));
+                break;
+            case "izquierda":
+                x = Math.max(limiteIzquierdo, x - velocidad);
+                break;
+            case "derecha":
+                x = Math.min(limiteDerecho, x + velocidad);
+                break;
+        }
     }
 
     public void recibirDanio(int cantidad) {
@@ -49,6 +52,7 @@ public class Gondolf {
             estaVivo = false;
         }
     }
+    
     public void usarMagia(int cantidad) {
         if (magia >= cantidad) {
             magia -= cantidad;
@@ -69,6 +73,7 @@ public class Gondolf {
     public void recuperarMagia(int cantidad) {
         magia = Math.min(50, magia + cantidad);
     }
+    
     public double getX() {
         return x;
     }

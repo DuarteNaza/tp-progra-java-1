@@ -4,7 +4,6 @@ package juego;
 import java.awt.Color;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
-import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -206,11 +205,10 @@ public class Juego extends InterfaceJuego{
 	
 	
 	
-private void dibujarMundo() {
+	private void dibujarMundo() {
     entorno.dibujarRectangulo(0, 0, 1000, 900, 0, Color.black);
     entorno.dibujarCirculo(gondolf.getX(), gondolf.getY(), 30, Color.BLUE);
     
-    // Dibujar rocas
     for (int i = 0; i < cantidadRocas; i++) {
         Roca r = rocas[i];
         entorno.dibujarRectangulo(r.getX(), r.getY(), r.getAncho(), r.getAlto(), 0, Color.GRAY);
@@ -218,7 +216,6 @@ private void dibujarMundo() {
     
     menu.dibujar(entorno, tiempoTotalFormateado, tiempoOleadaFormateado);
     
-    // Dibujar murciélagos
     for (int i = 0; i < cantidadMurcielagos; i++) {
         Murcielago m = murcielagos[i];
         if (m != null && m.estaActivo()) {
@@ -227,13 +224,11 @@ private void dibujarMundo() {
         }
     }
     
-    // Procesar hechizos y aplicar daño
     for (int i = 0; i < cantidadHechizos; i++) {
         Hechizo h = hechizosActivos[i];
         if (h != null && h.estaActivo()) {
             h.dibujar(entorno);
             
-            // Aplicar daño a enemigos
             for (int j = 0; j < cantidadMurcielagos; j++) {
                 Murcielago m = murcielagos[j];
                 if (m != null && m.estaActivo() && h.afectaA(m)) {
@@ -242,7 +237,6 @@ private void dibujarMundo() {
                     enemigosTotalesInactivos++;
                     enemigosTotalesActivos--;
                     
-                    // Generar pociones si el murciélago muere
                     if (!m.estaActivo() && Math.random() < 0.1 && cantidadPociones < pociones.length) {
                         pociones[cantidadPociones++] = new Pocion(m.getX(), m.getY());
                     }
@@ -250,21 +244,18 @@ private void dibujarMundo() {
             }
             
             h.desactivar();
-            // Eliminar hechizo después de usarlo
             hechizosActivos[i] = hechizosActivos[--cantidadHechizos];
             hechizosActivos[cantidadHechizos] = null;
-            i--; // Revisar la nueva posición
+            i--; 
         }
     }
     
-    // Dibujar pociones
     for (int i = 0; i < cantidadPociones; i++) {
         if (pociones[i] != null) {
             pociones[i].dibujar(entorno);
         }
     }
     
-    // Dibujar indicadores de daño
     for (int i = 0; i < cantidadIndicadores; i++) {
         IndicadorDaño ind = indicadoresDaño[i];
         if (ind != null) {
@@ -310,6 +301,8 @@ private void dibujarMundo() {
 	        menu.resetSeleccion();
 	    }
 	}
+	
+	
 	private void dibujarPantallaInicio() {
 	    entorno.dibujarRectangulo(
 	        600, 250,  
@@ -342,7 +335,7 @@ private void dibujarMundo() {
 		
 	
 	private void verificarColisiones() {
-	    // Pociones
+	    
 	    for (int i = 0; i < cantidadPociones; i++) {
 	        Pocion p = pociones[i];
 	        if (p != null && p.colisionaCon(gondolf)) {
@@ -354,13 +347,11 @@ private void dibujarMundo() {
 	                agregarIndicador(gondolf.getX(), gondolf.getY(), 15, Color.BLUE);
 	            }
 	            p.desactivar();
-	            // Eliminar la poción moviendo las últimas
 	            pociones[i] = pociones[--cantidadPociones];
 	            pociones[cantidadPociones] = null;
 	        }
 	    }
 
-	    // Murciélagos
 	    for (int i = 0; i < cantidadMurcielagos; i++) {
 	        Murcielago m = murcielagos[i];
 	        if (m != null && m.estaActivo() && distancia(gondolf, m) < 30) {
@@ -374,7 +365,6 @@ private void dibujarMundo() {
 	            enemigosTotalesInactivos++;
 	            enemigosTotalesActivos--;
 	            
-	            // 10% de chance de generar poción
 	            if (Math.random() < 0.1 && cantidadPociones < pociones.length) {
 	                pociones[cantidadPociones++] = new Pocion(m.getX(), m.getY());
 	            }
@@ -389,15 +379,6 @@ private void dibujarMundo() {
 	    }
 	}
 
-	// Este bloque debería estar en otro método o ser reemplazado por:
-	private void generarPocionesPorMurcielagosMuertos() {
-	    for (int i = 0; i < cantidadMurcielagos; i++) {
-	        Murcielago m = murcielagos[i];
-	        if (m != null && !m.estaActivo() && Math.random() < 0.1 && cantidadPociones < pociones.length) {
-	            pociones[cantidadPociones++] = new Pocion(m.getX(), m.getY());
-	        }
-	    }
-	}
 	
 	
 
@@ -444,10 +425,18 @@ private void dibujarMundo() {
 	    if (enemigosTotalesInactivos >= enemigosPorOleada) {
 	        oleadaActual++;
 	        tiempoInicioOleada = System.currentTimeMillis();
+	        enemigosBasePorOleada += 2;
 	        enemigosPorOleada = enemigosBasePorOleada + (oleadaActual * 2);
 	        enemigosTotalesActivos = 0;
 	        enemigosTotalesInactivos = 0;
 	        framesOleada = 60; 
+	    }
+	    if (oleadaActual % 3 == 0) {
+            for (int i = 0; i < cantidadMurcielagos; i++) {
+                if (murcielagos[i] != null) {
+                    murcielagos[i].aumentarDanio();
+                }
+            }
 	    }
 	    
 	}
