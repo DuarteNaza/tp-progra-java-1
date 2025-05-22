@@ -17,7 +17,7 @@ public class BotonHechizo {
 	public void dibujar(Entorno entorno, int offsetX, boolean seleccionado) {
 		Color color = seleccionado ? Color.ORANGE : Color.WHITE;
 		entorno.dibujarRectangulo(offsetX + 100, y, 180, 40, 0, color);
-		entorno.cambiarFont("Arial", 14, Color.BLACK);
+		entorno.cambiarFont("Papyrus", 20, new Color(100, 60, 30)); 
 		entorno.escribirTexto(nombre + " (" + costo + ")", offsetX + 30, y + 5);
 	}
 

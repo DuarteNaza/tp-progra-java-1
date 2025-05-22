@@ -50,7 +50,13 @@ public class Murcielago {
 
     public void dibujar(Entorno entorno) {
         if (!activo) return;
-        entorno.dibujarCirculo(x, y, 15, Color.RED);
+        entorno.dibujarCirculo(x, y, 15, new Color(90, 40, 60));
+        
+        entorno.dibujarTriangulo(x - 15, y, 10, 20, 315, new Color(150, 30, 50));
+        entorno.dibujarTriangulo(x + 15, y, 10, 20, 45, new Color(150, 30, 50));
+        
+        entorno.dibujarCirculo(x - 5, y - 2, 3, Color.RED);
+        entorno.dibujarCirculo(x + 5, y - 2, 3, Color.RED);
     }
     
     public void mover(double newX, double newY, Murcielago[] otrosMurcielagos, int cantidadOtros, double minDistance) {

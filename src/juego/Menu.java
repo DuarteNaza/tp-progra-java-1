@@ -52,9 +52,11 @@ public class Menu{
 	
 	
 	public void dibujar(Entorno entorno,String tiempoTotal, String tiempoOleada) {
-	    entorno.dibujarRectangulo(x + ancho / 2, alto / 2, ancho, alto, 0, new Color(80,80,80));
-
-	    entorno.cambiarFont("Arial", 18, Color.BLACK);
+	    
+		entorno.dibujarRectangulo(x + ancho / 2, alto / 2, ancho, alto, 0, new Color(240,230,200));
+		entorno.dibujarRectangulo(x + ancho / 2, alto / 2, ancho - 10, alto - 10, 0, new Color(200, 180, 150));
+	    entorno.cambiarFont("Arial", 16, Color.BLACK);
+	    entorno.cambiarFont("Papyrus", 18, new Color(161, 102, 47));
 	    entorno.escribirTexto("VIDA: " + vidaJugador, x + 20, 26);
 	    entorno.escribirTexto("MAGIA: " + energiaMagica, x + 20, 55);
 	    entorno.escribirTexto("ENEMIGOS: " + enemigosEliminados, x + 20, 220);
