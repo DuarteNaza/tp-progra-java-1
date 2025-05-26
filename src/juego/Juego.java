@@ -17,7 +17,7 @@ public class Juego extends InterfaceJuego{
 	private boolean juegoTerminado;
 	private boolean juegoIniciado;
 	private boolean juegoGanado;
-	private int enemigosTotales = 50;
+	private int enemigosTotales = 90;
 	private int enemigosEliminados = 0;
 	private int oleadaActual = 1;
 	private int enemigosPorOleada = 10;
@@ -30,14 +30,12 @@ public class Juego extends InterfaceJuego{
 	private long tiempoInicioOleada;
 	private String tiempoTotalFormateado = "00:00";
 	private String tiempoOleadaFormateado = "00:00";
-    
     private Roca[] rocas;
 	private Murcielago[] murcielagos;
     private Hechizo[] hechizosActivos;
     private Pocion[] pociones;
     private IndicadorDaño[] indicadoresDaño;
-
-	  private int cantidadRocas;
+	private int cantidadRocas;
 	  private int cantidadMurcielagos;
 	  private int cantidadHechizos;
 	  private int cantidadPociones;
@@ -152,7 +150,7 @@ public class Juego extends InterfaceJuego{
 	    if (gondolf.getVida() <= 0) {
 	        juegoTerminado = true;
 	        juegoGanado = false;
-	    } else if (enemigosEliminados >= enemigosTotales && cantidadMurcielagos == 0) {
+	    } else if (enemigosEliminadosPorHechizos >= enemigosTotales && cantidadMurcielagos == 0) {
 	        juegoTerminado = true;
 	        juegoGanado = true;
 	    }
@@ -244,6 +242,7 @@ public class Juego extends InterfaceJuego{
             }
             
             h.desactivar();
+	    	enemigosEliminados++;
             hechizosActivos[i] = hechizosActivos[--cantidadHechizos];
             hechizosActivos[cantidadHechizos] = null;
             i--; 
@@ -292,7 +291,7 @@ public class Juego extends InterfaceJuego{
 	private void lanzarHechizo(int x, int y) {
 	    BotonHechizo boton = menu.getHechizoSeleccionado();
 	    if (boton != null && gondolf.getMagia() >= boton.getCosto() && cantidadHechizos < hechizosActivos.length) {
-	        int daño = boton.getNombre().equals("Explosion") ? 2 : 1;
+	        int daño = boton.getNombre().equals("Explosion") ? 1 : 2;
 	        int costo = boton.getCosto();
 	        hechizosActivos[cantidadHechizos++] = new Hechizo(x, y, 50, daño, costo);
 	        gondolf.usarMagia(costo);
