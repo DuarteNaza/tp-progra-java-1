@@ -17,7 +17,7 @@ public class Juego extends InterfaceJuego{
 	private boolean juegoTerminado;
 	private boolean juegoIniciado;
 	private boolean juegoGanado;
-	private int enemigosTotales = 90;
+	private int enemigosTotales = 160;
 	private int enemigosEliminados = 0;
 	private int oleadaActual = 1;
 	private int enemigosPorOleada = 10;
@@ -36,11 +36,15 @@ public class Juego extends InterfaceJuego{
     private Pocion[] pociones;
     private IndicadorDaño[] indicadoresDaño;
 	private int cantidadRocas;
-	  private int cantidadMurcielagos;
-	  private int cantidadHechizos;
-	  private int cantidadPociones;
-	  private int cantidadIndicadores;
-	  
+	private int cantidadMurcielagos;
+	private int cantidadHechizos;
+	private int cantidadPociones=0;
+	private int cantidadIndicadores;
+	private boolean enPantallaRecompensas= false;
+	private final int OLEADAS_PARA_RECOMPENSA = 3;
+	private boolean jefeAparecido = false;
+	private int oleadaUltimaRecompensa = 0;
+
 	Juego(){
 		this.tiempoInicioTotal = System.currentTimeMillis();
 		this.tiempoInicioOleada = System.currentTimeMillis();
@@ -109,6 +113,10 @@ public class Juego extends InterfaceJuego{
 		        return;
 		    }
 		    
+		    if (enPantallaRecompensas) {
+		        manejarRecompensas();
+		        return; 
+		    }
 		    ejecutarLogicaDelJuego();
 		    actualizarEstadoDelJuego();
 		    dibujarElementos();
@@ -235,9 +243,10 @@ public class Juego extends InterfaceJuego{
                     enemigosTotalesInactivos++;
                     enemigosTotalesActivos--;
                     
-                    if (!m.estaActivo() && Math.random() < 0.1 && cantidadPociones < pociones.length) {
-                        pociones[cantidadPociones++] = new Pocion(m.getX(), m.getY());
-                    }
+                    if (!m.estaActivo() && Math.random() < 0.1 && cantidadPociones < pociones.length 
+                    	    && oleadaActual >= 2) { 
+                    	    pociones[cantidadPociones++] = new Pocion(m.getX(), m.getY());
+                    	}
                 }
             }
             
@@ -363,13 +372,17 @@ public class Juego extends InterfaceJuego{
 	            enemigosEliminadosPorHechizos++;
 	            enemigosTotalesInactivos++;
 	            enemigosTotalesActivos--;
-	            
-	            if (Math.random() < 0.1 && cantidadPociones < pociones.length) {
-	                pociones[cantidadPociones++] = new Pocion(m.getX(), m.getY());
+	            if (m instanceof MurcielagoRalentizador) {
+	            	 ((MurcielagoRalentizador)m).aplicarEfecto(gondolf);
 	            }
+	            }
+	        if (Math.random() < 0.1 && cantidadPociones < pociones.length 
+	        	    && enemigosEliminados >= 5 && oleadaActual >= 1) {
+	        	    pociones[cantidadPociones++] = new Pocion(m.getX(), m.getY());
+	        	}
 	        }
 	    }
-	}
+	
 
 	
 	private void agregarIndicador(double x, double y, int valor, Color color) {
@@ -389,25 +402,60 @@ public class Juego extends InterfaceJuego{
 	
 	
 	private void spawnearMurcielagos() {
-	    if (cantidadMurcielagos < 10 && (enemigosTotalesInactivos + enemigosTotalesActivos) < enemigosPorOleada 
-	        && enemigosEliminados < enemigosTotales) {
-	        
-	        double x, y;
-	        int borde = random.nextInt(4);
-	        
-	        switch (borde) {
-	            case 0: x = random.nextInt(1000); y = 0; break;
-	            case 1: x = 1000; y = random.nextInt(900); break;
-	            case 2: x = random.nextInt(1000); y = 900; break;
-	            case 3: x = 0; y = random.nextInt(900); break;
-	            default: x = 0; y = 0;
-	        }
-	        
-	        murcielagos[cantidadMurcielagos++] = new Murcielago(x, y, 2.0, oleadaActual);
-	        enemigosTotalesActivos++;
+	    if (cantidadMurcielagos >= 10 || 
+	        (enemigosTotalesInactivos + enemigosTotalesActivos) >= enemigosPorOleada || 
+	        enemigosEliminados >= enemigosTotales) {
+	        return;
 	    }
+
+	    if (oleadaActual >= 5 && !jefeAparecido && enemigosEliminados >= 30) {
+	        for (int i = 0; i < cantidadMurcielagos; i++) {
+	            murcielagos[i] = null;
+	        }
+	        cantidadMurcielagos = 0;
+	        
+	        murcielagos[cantidadMurcielagos++] = new JefeFinal(500, 300);
+	        jefeAparecido = true;
+	        enemigosTotalesActivos = 1; 
+	        return; 
+	    }
+
+	    double x, y;
+	    int borde = random.nextInt(4);
+	    switch (borde) {
+	        case 0: x = random.nextInt(1000); y = 0; break;	
+	        case 1: x = 1000; y = random.nextInt(900); break;
+	        case 2: x = random.nextInt(1000); y = 900; break;
+	        case 3: x = 0; y = random.nextInt(900); break;
+	        default: x = 0; y = 0;
+	    }
+
+	    Murcielago nuevoEnemigo;
+	    double rand = random.nextDouble();
+	    
+	    if (oleadaActual < 2) {
+	        nuevoEnemigo = new Murcielago(x, y, 2.0, oleadaActual);
+	    } 
+	    else if (oleadaActual < 4) {
+	        nuevoEnemigo = rand < 0.15 ? 
+	            new MurcielagoRalentizador(x, y, 2.0, oleadaActual) :
+	            new Murcielago(x, y, 2.0, oleadaActual);
+	    } 
+	    else {
+	        if (rand < 0.15) {
+	            nuevoEnemigo = new MurcielagoRalentizador(x, y, 2.0, oleadaActual);
+	        } 
+	        else if (rand < 0.25) {
+	            nuevoEnemigo = new MurcielagoCurador(x, y, 1.8, oleadaActual);
+	        } 
+	        else {
+	            nuevoEnemigo = new Murcielago(x, y, 2.0, oleadaActual);
+	        }
+	    }
+
+	    murcielagos[cantidadMurcielagos++] = nuevoEnemigo;
+	    enemigosTotalesActivos++;
 	}
-	
 	
 	private void moverMurcielagos() {
 	    for (int i = 0; i < cantidadMurcielagos; i++) {
@@ -421,28 +469,55 @@ public class Juego extends InterfaceJuego{
 
 	
 	private void actualizarOleada() {
-	    if (enemigosTotalesInactivos >= enemigosPorOleada) {
-	        oleadaActual++;
-	        tiempoInicioOleada = System.currentTimeMillis();
-	        enemigosBasePorOleada += 2;
-	        enemigosPorOleada = enemigosBasePorOleada + (oleadaActual * 2);
-	        enemigosTotalesActivos = 0;
-	        enemigosTotalesInactivos = 0;
-	        framesOleada = 60; 
-	    }
-	    if (oleadaActual % 3 == 0) {
-            for (int i = 0; i < cantidadMurcielagos; i++) {
-                if (murcielagos[i] != null) {
-                    murcielagos[i].aumentarDanio();
-                }
-            }
-	    }
+		 if (enemigosTotalesInactivos >= enemigosPorOleada) {
+		        oleadaActual++;
+		        tiempoInicioOleada = System.currentTimeMillis();
+		        enemigosBasePorOleada += 2;
+		        enemigosPorOleada = enemigosBasePorOleada + (oleadaActual * 2);
+		        enemigosTotalesActivos = 0;
+		        enemigosTotalesInactivos = 0;
+		        framesOleada = 60;
+		        
+		        if (oleadaActual >= oleadaUltimaRecompensa + OLEADAS_PARA_RECOMPENSA) {
+		            enPantallaRecompensas = true;
+		            oleadaUltimaRecompensa = oleadaActual;
+		        }
+		    }
 	    
 	}
 	
 	
 	
-	
+	private void manejarRecompensas() {
+		entorno.dibujarRectangulo(500, 350, 600, 300, 0, new Color(0, 0, 0, 200));
+	    
+	    entorno.cambiarFont("Arial", 40, Color.YELLOW);
+	    entorno.escribirTexto("RECOMPENSA DE OLEADA", 350, 200);
+	    
+	    entorno.cambiarFont("Arial", 30, new Color(100, 255, 100));
+	    entorno.escribirTexto("1. +20 Vida Máxima", 400, 250);
+	    
+	    entorno.cambiarFont("Arial", 30, new Color(100, 100, 255));
+	    entorno.escribirTexto("2. +15 Magia Máxima", 400, 300);
+	    
+	    entorno.cambiarFont("Arial", 30, new Color(255, 150, 50));
+	    entorno.escribirTexto("3. +2 Velocidad", 400, 350);
+	    
+	    entorno.cambiarFont("Arial", 20, Color.WHITE);
+	    entorno.escribirTexto("Presiona 1, 2 o 3 para seleccionar", 380, 400);
+	    
+	    if (entorno.sePresiono('1')) {
+	        gondolf.aumentarVidaMaxima(20);
+	        enPantallaRecompensas = false;
+	    } else if (entorno.sePresiono('2')) {
+	        gondolf.aumentarMagiaMaxima(15);
+	        enPantallaRecompensas = false;
+	    } else if (entorno.sePresiono('3')) {
+	        gondolf.setVelocidad(gondolf.getVelocidad() + 2);
+	        enPantallaRecompensas = false;
+	    }
+	}
+
 	@SuppressWarnings("unused")
 	public static void main(String[] args)
 	{

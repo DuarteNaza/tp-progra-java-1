@@ -15,7 +15,8 @@ public class Menu{
 	public int getY() {
 		return y;
 	}
-	public void setY(int y) {
+	
+public void setY(int y) {
 		this.y = y;
 	}
 
@@ -64,7 +65,8 @@ public class Menu{
         entorno.cambiarFont("Arial", 14, Color.WHITE);
         entorno.escribirTexto("TIEMPO TOTAL: " + tiempoTotal, x + 20, 250); 
         entorno.escribirTexto("TIEMPO OLEADA: " + tiempoOleada, x + 20, 280);
-        
+        entorno.cambiarFont("Arial", 16, Color.BLACK);
+
 	    for (int i = 0; i < botones.length; i++) {
 	        boolean seleccionado = (i == hechizoSeleccionado);
 	        botones[i].dibujar(entorno, x, seleccionado);

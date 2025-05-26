@@ -10,8 +10,10 @@ public class Gondolf {
     private double velocidad;
     boolean estaVivo;
     private double ancho;
-
-    
+    private double velocidadOriginal= 9.0;;
+    private int framesRalentizado;
+    private static int vidaMaxima = 100;
+    private static int magiaMaxima=50;
     public Gondolf(double x, double y, double ancho) {
         this.x = x;
         this.setY(y);
@@ -59,12 +61,7 @@ public class Gondolf {
         }
     }
 
-    public void dibujar() {
-    	 System.out.println(
-    		        "Gondolf - Posición: (" + x + ", " + y + "), " +
-    		        "Vida: " + vida + ", Magia: " + magia
-    		    );
-    }
+
     
     public void recuperarVida(int cantidad) {
         vida = Math.min(100, vida + cantidad); 
@@ -73,6 +70,39 @@ public class Gondolf {
     public void recuperarMagia(int cantidad) {
         magia = Math.min(50, magia + cantidad);
     }
+    
+    public void ralentizar(double factor) {
+        if (velocidad == velocidadOriginal) { // Solo aplicar si no está ya ralentizado
+            velocidad *= factor;
+        }
+    }
+    
+    public void restaurarVelocidad() {
+        velocidad = velocidadOriginal;
+    }
+
+    public void actualizarEfectos() {
+        if (framesRalentizado > 0) {
+            framesRalentizado--;
+            if (framesRalentizado == 0) {
+                velocidad = velocidadOriginal;
+            }
+        }
+      }
+    
+    public void aumentarVidaMaxima(int cantidad) {
+        this.vidaMaxima += cantidad;
+        this.vida += cantidad;
+    }
+
+    public void aumentarMagiaMaxima(int cantidad) {
+        this.magiaMaxima += cantidad;
+        this.magia += cantidad; 
+    }
+    
+    public void setVelocidad(double velocidad) {
+        this.velocidad = velocidad;
+    }    
     
     public double getX() {
         return x;
@@ -105,5 +135,11 @@ public class Gondolf {
     public boolean estaVivo() {
         return estaVivo;
     }
+    public static int getVidaMaxima() {
+        return vidaMaxima;
+    }
 
+    public static int getMagiaMaxima() {
+        return magiaMaxima;
+    }
 }

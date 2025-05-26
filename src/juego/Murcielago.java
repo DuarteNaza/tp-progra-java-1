@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import entorno.Entorno;
 
 public class Murcielago {
-    private double x, y;
-    private boolean activo;
+    protected double x;
+    protected double y;
+    protected boolean activo;
     private int vida;
     private double velocidadBase;
     private double velocidadActual;
@@ -22,9 +23,11 @@ public class Murcielago {
         this.vida = 1;
         this.danio = 10;
     }
-
+    public double distancia(Gondolf gondolf) {
+    	return Math.sqrt(Math.pow(x - gondolf.getX(), 2) + Math.pow(y - gondolf.getY(), 2));
+    }
     public void moverHacia(Gondolf gondolf) {
-        if (!activo) return;
+    	if (!activo) return;
         
         double dx = gondolf.getX() - x;
         double dy = gondolf.getY() - y;
@@ -76,6 +79,15 @@ public class Murcielago {
          this.x = newX;
          this.y = newY;
      }
+    public void recibirCuracion(int cantidad) {
+        if (this.vida < 3) { 
+            this.vida += cantidad;
+        }
+    }
+
+    protected double distancia(Murcielago otro) {
+        return Math.sqrt(Math.pow(x - otro.x, 2) + Math.pow(y - otro.y, 2));
+    }
     public void aumentarDanio() {
         this.danio += 5;
     }
