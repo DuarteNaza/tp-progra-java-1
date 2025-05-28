@@ -24,7 +24,7 @@ public class MurcielagoRalentizador extends Murcielago {
     
     public void aplicarEfecto(Gondolf gondolf) {
         if (distancia(gondolf) < 100 && !efectoAplicado) {
-            gondolf.ralentizar(0.7); // Reduce velocidad al 70%
+            gondolf.ralentizar(0.5); // Reduce velocidad al 70%
             efectoAplicado = true;
             
             // Temporizador para resetear el efecto

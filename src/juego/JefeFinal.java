@@ -47,6 +47,13 @@ public class JefeFinal extends Murcielago {
         }
     }
     
+    public static void colisionJefe(Gondolf gondolf) {
+    	if (Juego.framesDeInvulnerabilidad == 0) {
+    		gondolf.recibirDanio(20);
+    		Juego.framesDeInvulnerabilidad += 60;
+    	}
+    }
+    
     @Override
     public void recibirDanio(int cantidad) {
         this.vida -= cantidad;

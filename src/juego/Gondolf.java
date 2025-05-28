@@ -64,11 +64,11 @@ public class Gondolf {
 
     
     public void recuperarVida(int cantidad) {
-        vida = Math.min(100, vida + cantidad); 
+        vida = Math.min(vidaMaxima, vida + cantidad); 
     }
 
     public void recuperarMagia(int cantidad) {
-        magia = Math.min(50, magia + cantidad);
+        magia = Math.min(magiaMaxima, magia + cantidad);
     }
     
     public void ralentizar(double factor) {

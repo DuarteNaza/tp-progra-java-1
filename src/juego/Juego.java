@@ -40,6 +40,7 @@ public class Juego extends InterfaceJuego{
 	private int cantidadHechizos;
 	private int cantidadPociones=0;
 	private int cantidadIndicadores;
+	static int framesDeInvulnerabilidad = 0;
 	private boolean enPantallaRecompensas= false;
 	private final int OLEADAS_PARA_RECOMPENSA = 3;
 	private boolean jefeAparecido = false;
@@ -136,6 +137,7 @@ public class Juego extends InterfaceJuego{
 	    spawnearMurcielagos();
 	    moverMurcielagos();
 	    actualizarOleada();
+	    actualizarFramesDeInvulnerabilidad();
 	}
 
 	private void actualizarEstadoDelJuego() {
@@ -158,7 +160,7 @@ public class Juego extends InterfaceJuego{
 	    if (gondolf.getVida() <= 0) {
 	        juegoTerminado = true;
 	        juegoGanado = false;
-	    } else if (enemigosEliminadosPorHechizos >= enemigosTotales && cantidadMurcielagos == 0) {
+	    } else if (enemigosEliminadosPorHechizos >= enemigosTotales && cantidadMurcielagos == 0 && jefeAparecido == false && oleadaActual == 10) {
 	        juegoTerminado = true;
 	        juegoGanado = true;
 	    }
@@ -172,6 +174,12 @@ public class Juego extends InterfaceJuego{
 	    }
 	}
 
+	private void actualizarFramesDeInvulnerabilidad() {
+	    if (framesDeInvulnerabilidad >= 1) {
+	        framesDeInvulnerabilidad--;
+	    }
+	}
+	    
 	private void dibujarElementos() {
 	    dibujarMundo();
 	}
@@ -349,10 +357,10 @@ public class Juego extends InterfaceJuego{
 	        if (p != null && p.colisionaCon(gondolf)) {
 	            if (p.getTipo() == 1) {
 	                gondolf.recuperarVida(20);
-	                agregarIndicador(gondolf.getX(), gondolf.getY(), 20, Color.GREEN);
+	                agregarIndicador(gondolf.getX(), gondolf.getY(), -20, Color.GREEN);
 	            } else {
 	                gondolf.recuperarMagia(15);
-	                agregarIndicador(gondolf.getX(), gondolf.getY(), 15, Color.BLUE);
+	                agregarIndicador(gondolf.getX(), gondolf.getY(), -15, Color.BLUE);
 	            }
 	            p.desactivar();
 	            pociones[i] = pociones[--cantidadPociones];
@@ -363,24 +371,31 @@ public class Juego extends InterfaceJuego{
 	    for (int i = 0; i < cantidadMurcielagos; i++) {
 	        Murcielago m = murcielagos[i];
 	        if (m != null && m.estaActivo() && distancia(gondolf, m) < 30) {
-	            gondolf.recibirDanio(10);
-	            agregarIndicador(gondolf.getX(), gondolf.getY(), -10, Color.RED);
-	            
-	            m.recibirDanio(100);
-	            agregarIndicador(m.getX(), m.getY(), -100, Color.ORANGE);
-	            
-	            enemigosEliminadosPorHechizos++;
-	            enemigosTotalesInactivos++;
-	            enemigosTotalesActivos--;
 	            if (m instanceof MurcielagoRalentizador) {
 	            	 ((MurcielagoRalentizador)m).aplicarEfecto(gondolf);
+	            	 gondolf.recibirDanio(m.getDanio());
 	            }
+	            if (m instanceof JefeFinal) {
+	            	JefeFinal.colisionJefe(gondolf);
+	            }
+	            
+	            else {
+		            gondolf.recibirDanio(m.getDanio());
+		            agregarIndicador(gondolf.getX(), gondolf.getY(), +10, Color.RED);
+		            
+		            m.recibirDanio(1);
+		            agregarIndicador(m.getX(), m.getY(), +1, Color.ORANGE);
+		            
+		            enemigosEliminadosPorHechizos++;
+		            enemigosTotalesInactivos++;
+		            enemigosTotalesActivos--;
 	            }
 	        if (Math.random() < 0.1 && cantidadPociones < pociones.length 
 	        	    && enemigosEliminados >= 5 && oleadaActual >= 1) {
 	        	    pociones[cantidadPociones++] = new Pocion(m.getX(), m.getY());
 	        	}
 	        }
+	    }
 	    }
 	
 
@@ -408,7 +423,7 @@ public class Juego extends InterfaceJuego{
 	        return;
 	    }
 
-	    if (oleadaActual >= 5 && !jefeAparecido && enemigosEliminados >= 30) {
+	    if (oleadaActual == 10 && !jefeAparecido && enemigosEliminados >= 0) {
 	        for (int i = 0; i < cantidadMurcielagos; i++) {
 	            murcielagos[i] = null;
 	        }
@@ -416,7 +431,7 @@ public class Juego extends InterfaceJuego{
 	        
 	        murcielagos[cantidadMurcielagos++] = new JefeFinal(500, 300);
 	        jefeAparecido = true;
-	        enemigosTotalesActivos = 1; 
+	        enemigosTotalesActivos = enemigosPorOleada; 
 	        return; 
 	    }
 
@@ -469,7 +484,7 @@ public class Juego extends InterfaceJuego{
 
 	
 	private void actualizarOleada() {
-		 if (enemigosTotalesInactivos >= enemigosPorOleada) {
+		 if (enemigosTotalesInactivos >= enemigosPorOleada && jefeAparecido == false) {
 		        oleadaActual++;
 		        tiempoInicioOleada = System.currentTimeMillis();
 		        enemigosBasePorOleada += 2;
