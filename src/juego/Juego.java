@@ -14,6 +14,7 @@ public class Juego extends InterfaceJuego{
 	private Gondolf gondolf;
 	private Random random;
 	private Menu menu;
+	private Escudo escudo; 
 	private boolean juegoTerminado;
 	private boolean juegoIniciado;
 	private boolean juegoGanado;
@@ -60,6 +61,9 @@ public class Juego extends InterfaceJuego{
 	    this.hechizosActivos = new Hechizo[5];
 	    this.pociones = new Pocion[10]; 
 	    this.indicadoresDaño = new IndicadorDaño[20];
+	    this.escudo = new Escudo(200); // Duración del escudo en frames (3-4 segundos aprox.)
+
+
 	        
 
 	        murcielagos[0] = new Murcielago(100, 100, 2, oleadaActual);
@@ -121,6 +125,7 @@ public class Juego extends InterfaceJuego{
 		    ejecutarLogicaDelJuego();
 		    actualizarEstadoDelJuego();
 		    dibujarElementos();
+		    escudo.actualizar();
 		}
 
 	private void manejarPantallaInicio() {
@@ -222,7 +227,8 @@ public class Juego extends InterfaceJuego{
 	private void dibujarMundo() {
     entorno.dibujarRectangulo(0, 0, 1000, 900, 0, Color.black);
     entorno.dibujarCirculo(gondolf.getX(), gondolf.getY(), 30, Color.BLUE);
-    
+    escudo.dibujar(entorno, gondolf.getX(), gondolf.getY());
+
     for (int i = 0; i < cantidadRocas; i++) {
         Roca r = rocas[i];
         entorno.dibujarRectangulo(r.getX(), r.getY(), r.getAncho(), r.getAlto(), 0, Color.GRAY);
@@ -307,16 +313,30 @@ public class Juego extends InterfaceJuego{
 	
 	private void lanzarHechizo(int x, int y) {
 	    BotonHechizo boton = menu.getHechizoSeleccionado();
-	    if (boton != null && gondolf.getMagia() >= boton.getCosto() && cantidadHechizos < hechizosActivos.length) {
+	    if (boton == null) {
+	        menu.resetSeleccion();
+	        return;
+	    }
+
+	    if (boton.getNombre().equals("Escudo")) {
+	        if (!escudo.estaActivo() && !escudo.enCooldown()) {
+	            escudo.activar(); 
+	        }
+	        menu.resetSeleccion();
+	        return;
+	    }
+
+	    
+	    if (gondolf.getMagia() >= boton.getCosto() && cantidadHechizos < hechizosActivos.length) {
 	        int daño = boton.getNombre().equals("Explosion") ? 1 : 2;
 	        int costo = boton.getCosto();
 	        hechizosActivos[cantidadHechizos++] = new Hechizo(x, y, 50, daño, costo);
 	        gondolf.usarMagia(costo);
-	        menu.resetSeleccion();
-	    } else {
-	        menu.resetSeleccion();
 	    }
+
+	    menu.resetSeleccion();
 	}
+
 	
 	
 	private void dibujarPantallaInicio() {
@@ -380,16 +400,20 @@ public class Juego extends InterfaceJuego{
 	            }
 	            
 	            else {
-		            gondolf.recibirDanio(m.getDanio());
-		            agregarIndicador(gondolf.getX(), gondolf.getY(), +10, Color.RED);
-		            
-		            m.recibirDanio(1);
-		            agregarIndicador(m.getX(), m.getY(), +1, Color.ORANGE);
-		            
-		            enemigosEliminadosPorHechizos++;
-		            enemigosTotalesInactivos++;
-		            enemigosTotalesActivos--;
-	            }
+	            	if (!escudo.estaActivo()) {
+	            	    gondolf.recibirDanio(m.getDanio());
+	            	    agregarIndicador(gondolf.getX(), gondolf.getY(), +m.getDanio(), Color.RED);
+	            	} else {
+	            	    agregarIndicador(gondolf.getX(), gondolf.getY(), 0, Color.CYAN);
+	            	}
+
+	            	m.recibirDanio(1);
+	            	agregarIndicador(m.getX(), m.getY(), +1, Color.ORANGE);
+
+	            	enemigosEliminadosPorHechizos++;
+	            	enemigosTotalesInactivos++;
+	            	enemigosTotalesActivos--;
+
 	        if (Math.random() < 0.1 && cantidadPociones < pociones.length 
 	        	    && enemigosEliminados >= 5 && oleadaActual >= 1) {
 	        	    pociones[cantidadPociones++] = new Pocion(m.getX(), m.getY());
@@ -397,7 +421,7 @@ public class Juego extends InterfaceJuego{
 	        }
 	    }
 	    }
-	
+	}
 
 	
 	private void agregarIndicador(double x, double y, int valor, Color color) {

@@ -37,6 +37,7 @@ public void setY(int y) {
 	        this.botones = new BotonHechizo[] {
 	            new BotonHechizo("Explosion", 100, 0), 
 	            new BotonHechizo("Fuego", 160, 30),
+	            new BotonHechizo ("Escudo", 220, 20)
 	        };
 	        this.x = x;
 	        this.ancho = ancho;
